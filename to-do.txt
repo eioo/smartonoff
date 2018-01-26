@@ -1,0 +1,1 @@
+- Cheapest prices dont work properly if many prices with same value (Only chart dot colors)

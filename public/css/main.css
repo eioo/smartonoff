@@ -1,0 +1,12 @@
+.alert-fixed {
+    position: fixed;
+    bottom: 5px;
+    right: 25px;
+    z-index: 9999;
+}
+
+.mt-label {
+    margin-top: 10px !important;
+}
+#hour-chooser {
+}
