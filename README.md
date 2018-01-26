@@ -5,7 +5,7 @@ Can turn relays on / off based on current electricity prices, temperature or man
 ### Installing
 ```
 npm install
-npm install -g gulp
+npm install -g gulp-cli
 ```
 ### Running
 ```
