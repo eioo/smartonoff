@@ -2,20 +2,7 @@ let socket = io();
 let chart;
 let pricesTemp;
 
-function createChart(goals = []) {
-    let yLimit = 0;
-
-    /* if (pricesTemp.limit.type === 'cheapestPrices') {
-        if (pricesTemp.limit.value) {
-            let cheapest = getCheapestHours(pricesTemp.limit.value, returnSorted = false);
-            yLimit = cheapest[cheapest.length - 1].price;
-        }
-    
-    } else if (pricesTemp.limit.type === 'under') {
-        yLimit = pricesTemp.limit.value;
-    }*/ 
-
-
+function createChart() {
     const options = {
         element: 'price-chart',
         data: pricesTemp.prices.hourly,
@@ -33,119 +20,40 @@ function createChart(goals = []) {
         resize: true,
         xLabelMargin: 5,
         
-        goals: goals,
+        goals: [],
         goalLineColors: ['#ff0000'],
-        yValueCheck: [2, 3, 7],
-        yValueCheckColor: "#F47474"
+        xValueCheck: [],
+        xValueCheckColor: '#F47474'
     };
 
     return new Morris.Line(options);
 }
 
-function updateChart() {
-    console.log("Update chart");
+function updateRelayInfo(relay) {
+    const $limitLabel       = $('#relay-info #limit');
+    const $activeHoursLabel = $('#relay-info #active-hours');
 
-    /*// Pricelimit changed
-    if (pricesTemp.limit.type === 'under') {
-        if (pricesTemp.limit.value !== chart.options.goals) {
-            if (pricesTemp.limit.value > 0) {
-                chart.options.yValueCheck = pricesTemp.limit.value;
-                chart.options.goals = [pricesTemp.limit.value];
-            } else {
-                chart.options.yValueCheck = 0;
-                chart.options.goals = [];
-            }
-        }
-
-        chart.redraw();
-
-    } else if (pricesTemp.limit.type === 'cheapestPrices') {
-        let yLimit = 0;
-
-        if (pricesTemp.limit.value) {
-            let cheapest = getCheapestHours(pricesTemp.limit.value, returnSorted = false);
-            yLimit = cheapest[cheapest.length - 1].price;
-        }
-        
-        chart.options.yValueCheck = yLimit;
-        chart.options.goals = [];
-        
-        chart.redraw();
-    }*/
-}
-
-function getMedian(arr) {
-    arr.sort((a, b) => a - b);
-    let lowMiddle = Math.floor((arr.length - 1) / 2);
-    let highMiddle = Math.ceil((arr.length - 1) / 2);
-    let median = (arr[lowMiddle] + arr[highMiddle]) / 2;
-    return median;
-}
-
-function getAverage(arr) {
-    let sum = arr.reduce((previous, current) => current += previous);
-    let avg = sum / arr.length;
-    return avg;
-}
-
-function isNumber(num) {
-    return !isNaN(num);
-}
-
-function getActiveHours(limit) {
-    return pricesTemp.prices.hourly.filter(price => price.price <= limit)
-        .map((elem) => {
-            return elem.hour;
-        })
-        .sort((a, b) => {
-            return a - b;
-        });
-}
-
-function getCheapestHours(howMany, returnSorted=true) {
-    let cheapest = pricesTemp.prices.hourly
-        .concat() // Copy array
-        .sort((a,b) => {
-            return (a.price > b.price) ? 1 : ((b.price > a.price) ? -1 : 0);
-        })
-        .slice(0, howMany);
-
-    if (returnSorted) {
-        cheapest = cheapest.map((price) => {
-            return parseFloat(price.hour);
-        })
-        .sort((a, b) => {
-            return a - b;
-        });
-    }
-
-    return cheapest;
-}
-
-function selectRelay(relayName) {
-    $('.btn-relay').removeClass('active');
-
-    let $btn = $(`.btn-relay[data-name='${relayName}']`);
-
-    const $limitInput       = $('#settings-limit-input');
-    const $limitLabel       = $('#settings-limit');
-    const $activeHoursLabel = $('#settings-active-hours');
-    const $cheapestCombo    = $('#hour-selector');
-    
-    const relay = pricesTemp.relays.find(x => x.name == relayName);
-    
-    if (relay.limit.type === "cheaperThan") {
+    if (relay.limit.type === 'cheaperThan') {
         if (relay.limit.value) {
-            $limitInput.val(relay.limit.value.toFixed(2));
-            $limitLabel.html(relay.limit.value.toFixed(2) + " snt/kWh");
-            $activeHoursLabel.html(getActiveHours(relay.limit.value).join(', '));
-        } else {
-            $limitInput.val('');
-        }
+            $limitLabel.html(relay.limit.value.toFixed(2) + ' snt/kWh');
+            
+            const activeHours = getActiveHours(relay.limit.value).join(', ');
+            if (activeHours) {
+                $activeHoursLabel.html(activeHours);
+            } else {
+                $activeHoursLabel.html('Ei aktiivisia tunteja');
+            }
 
-        $cheapestCombo.val('disabled');
+            chart.options.goals = [relay.limit.value];
+            chart.options.xValueCheck = getActiveHours(relay.limit.value);
+            chart.redraw();
+        } else {
+            chart.options.goals = [];
+            chart.options.xValueCheck = [];
+            chart.redraw();
+        }
     }
-    else if (relay.limit.type === "cheapest") {
+    else if (relay.limit.type === 'cheapest') {
         if (relay.limit.value === 1) {
             $limitLabel.html('Vain halvin tunti');
         } else {
@@ -153,73 +61,35 @@ function selectRelay(relayName) {
         }
         
         $activeHoursLabel.html(getCheapestHours(relay.limit.value, true).join(', '));
-        $cheapestCombo.val(relay.limit.value);
-        $limitInput.val('');
+        chart.options.goals = [];
+        chart.options.xValueCheck = getCheapestHours(relay.limit.value);
+        chart.redraw();
     }
     else {
-        $limitInput.val('');
         $limitLabel.html('Ei asetettu');
         $activeHoursLabel.html('Ei aktiivinen');
+
+        chart.options.goals = [];
+        chart.options.xValueCheck = [];
+        chart.redraw();
     }
-    
-    $btn.addClass('active');
 }
 
-function clickHandler() {
-    $('#btn-set-limit').click((event) => {
-        event.preventDefault();
-        
-        const newValue = $('#settings-limit-input').val();
+function selectRelay(relayId) {
+    const $btn              = $(`.btn-relay[data-relay-id='${relayId}']`);
+    const $relayName        = $('#relay-info-name');
 
-        if (isNumber(newValue)) {
-            const newLimit = {
-                type: 'under',
-                value: parseFloat(newValue)
-            };
+    const relay = pricesTemp.relays[relayId];
 
-            socket.emit('set limit', newLimit);
-            pricesTemp.limit = newLimit;
+    $('.btn-relay').removeClass('active');
+    $('#relay-info-none').hide();
+    $('#relay-info').show();
+    $('.tab-content :input').attr('disabled', false);
 
-            // Update UI
-            if (newLimit.value > 0) {
-                showNotification('Rajoitus asetettu! (' + newLimit.value + ' snt/kWh)');
-            } else {
-                showNotification('Rajoitus poistettu käytöstä', 'danger');
-            }
+    $relayName.html('(' + relay.name + ')');
+    $btn.addClass('active');
 
-            updateUI();
-        } else {
-            showNotification('Arvo ei kelpaa!', 'danger');
-        }
-    });
-
-    $('.btn-relay').click(function() {
-        selectRelay($(this).attr('data-name'));
-    });
-
-    $('#btn-test').click(() => {
-        const selectedRelay = $('.btn-relay').index($('.active'));
-        if (selectedRelay !== -1) {
-            socket.emit('test relay', selectedRelay);
-        }
-    });
-
-    $(document).on('change', '#hour-selector', () => {
-        const newLimit = {
-            type: 'cheapestPrices',
-            value: parseFloat($('#hour-selector').val())
-        };
-
-        socket.emit('set limit', newLimit);
-        pricesTemp.limit = newLimit;
-
-        if (newLimit.value > 0) {
-            showNotification('Rajoitus asetettu! (' + $('#hour-selector').val() + ' halvinta)');
-        } else {
-            showNotification('Rajoitus poistettu käytöstä', 'danger');
-        }
-        updateUI();
-    });
+    updateRelayInfo(relay);
 }
 
 function showNotification(text, style = 'info') {
@@ -247,39 +117,134 @@ function showNotification(text, style = 'info') {
 }
 
 function updateUI() {
-    updateChart();
-      
-      /* Infobox */
-    const pricesWithoutHours = pricesTemp.prices.hourly.map((price) => { return price.price });
+    const pricesOnly = pricesTemp.prices.hourly.map((price) => { return price.price });
 
-    const highest = Math.max(...pricesWithoutHours).toFixed(2);
-    const lowest  = Math.min(...pricesWithoutHours).toFixed(2);
-    const median  = getMedian(pricesWithoutHours).toFixed(2);
-    const average = getAverage(pricesWithoutHours).toFixed(2);
-
-    $('#info-highest-price').html(highest + ' snt/kWh');
-    $('#info-lowest-price').html(lowest + ' snt/kWh');
-    $('#info-median-price').html(median + ' snt/kWh');
-    $('#info-average-price').html(average + ' snt/kWh');
-
-    /* Settings */
-    const $priceLimitInput       = $('#settings-limit-input');
-    const $priceLimitElement     = $('#settings-limit');
-    const $activeHoursElement    = $('#settings-active-hours');
+    $('#stats #highest-price').html(Math.max(...pricesOnly).toFixed(2) + ' snt/kWh');
+    $('#stats #lowest-price') .html(Math.min(...pricesOnly).toFixed(2) + ' snt/kWh');
+    $('#stats #median-price') .html(getMedian(pricesOnly).toFixed(2) + ' snt/kWh');
+    $('#stats #average-price').html(getAverage(pricesOnly).toFixed(2) + ' snt/kWh');
 }
+
+function removeRelayLimit(relayId) {
+    const newLimit = {
+        type: null,
+        value: null
+    }
+
+    socket.emit('set limit', { relayId: relayId, limit: newLimit });
+
+    const relay = pricesTemp.relays[relayId];
+    relay.limit = newLimit;
+    updateRelayInfo(relay);
+
+    chart.options.goals = [];
+    chart.options.xValueCheck = [];
+    chart.redraw();
+}
+
+function clickHandler() {
+    $('#btn-save').click((event) => {
+        event.preventDefault();
+        
+        const selectedRelay = $('.btn-relay.active').index();
+        
+        if (selectedRelay === -1) {
+            showNotification('<strong>Tallentaminen epäonnistui</strong><br>Mitään relettä ei ole valittu', 'danger');
+            return;
+        }
+        
+        const limitType = $('.tab-content .active').attr('data-limit-type');
+
+        if (limitType === 'cheaperThan') {
+            let limitValue = $("#settings-form #cheaper-than").val();
+
+            if (!isNumber(limitValue)) {
+                showNotification('<strong>Tallentaminen epäonnistui</strong><br>Syöttämäsi arvo ei kelpaa.', 'danger');
+                return;
+            }
+
+            limitValue = parseFloat(limitValue);
+
+            if (limitValue) {
+                const newLimit = {
+                    type: "cheaperThan",
+                    value: limitValue
+                }
+
+                socket.emit('set limit', { relayId: selectedRelay, limit: newLimit });
+                
+                const relay = pricesTemp.relays[selectedRelay];
+                relay.limit = newLimit;
+                updateRelayInfo(relay);
+
+                chart.options.goals = [limitValue];
+                chart.options.xValueCheck = getActiveHours(limitValue);
+                chart.redraw();
+            } else {
+                removeRelayLimit(selectedRelay);
+            }
+
+            showNotification('<strong>Tallentaminen onnistui</strong>', 'success');
+            
+        } else if (limitType === 'cheapest') {
+            let limitValue = $('#settings-form #cheapest').val();
+
+            if (limitValue == 0 || !limitValue) {
+                console.log('removing relay limit');
+                removeRelayLimit(selectedRelay);
+            } else {
+                const newLimit = {
+                    type: "cheapest",
+                    value: limitValue
+                }
+
+                socket.emit('set limit', { relayId: selectedRelay, limit: newLimit });
+                
+                const relay = pricesTemp.relays[selectedRelay];
+                relay.limit = newLimit;
+                updateRelayInfo(relay);
+
+                chart.options.goals = [];
+                chart.options.xValueCheck = getCheapestHours(limitValue);
+                chart.redraw();
+            }
+            
+            showNotification('<strong>Tallentaminen onnistui</strong>', 'success');
+
+        } else if (limitType === 'temperature') {
+            // TODO
+        }
+    });
+
+    $('#btn-test').click(() => {
+        const selectedRelay = $('.btn-relay.active').index();
+        
+        if (selectedRelay === -1) {
+            showNotification('<strong>Testaaminen epäonnistui</strong><br>Mitään relettä ei ole valittu', 'danger');
+            return;
+        }
+        
+        socket.emit('test relay', selectedRelay);
+        showNotification('<strong>Testaaminen onnistui</strong><br>Rele ' + (selectedRelay + 1) + ' kytketään päälle 5 sekunniksi.', 'info');
+    });
+
+    $('.btn-relay').click(function() {
+        selectRelay($(this).attr('data-relay-id'));
+    });
+
+    // Reset form content when tab changes
+    $("a[data-toggle='tab']").on('shown.bs.tab', function (e) {
+        $('#settings-form')[0].reset();
+    });
+}
+
 
 function socketListener() {
     socket.on('prices', (prices) => {
-        console.log("Socket: prices");
         pricesTemp = prices;
 
         if (!chart) {
-            /*if (pricesTemp.limit.type === 'under') {
-                chart = createChart([pricesTemp.limit.value])
-            } else {
-                chart = createChart();
-            }*/
-                chart = createChart();
+            chart = createChart();
         }
 
         updateUI();
@@ -288,6 +253,7 @@ function socketListener() {
 
 $(() => {
     socket.emit('get prices');
+    $('.tab-content :input').attr('disabled', true);
 
     socketListener();
     clickHandler();

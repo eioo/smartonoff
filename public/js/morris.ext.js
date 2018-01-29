@@ -15,8 +15,10 @@
             return this.options.lineColors.call(this, row, sidx, type);
         } else if (type === 'point') {
 
-            if (this.options.yValueCheck.includes(row.x)) {
-                return this.options.yValueCheckColor;
+            if (this.options.xValueCheck) {
+                if (this.options.xValueCheck.includes(row.x)) {
+                    return this.options.xValueCheckColor;
+                }
             }
 
             return this.options.pointFillColors[sidx % this.options.pointFillColors.length] || this.options.lineColors[sidx % this.options.lineColors.length];                   

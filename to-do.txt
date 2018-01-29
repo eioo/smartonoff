@@ -1,1 +1,2 @@
-- Cheapest prices dont work properly if many prices with same value (Only chart dot colors)
+- Autorefresh of chart on start of each day
+- Make temperatures work

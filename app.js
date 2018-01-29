@@ -40,7 +40,7 @@ io.on('connection', (socket) => {
 
 	// Turns relay on for 2.5s for test purposes
 	socket.on('test relay', (relayId) => {
-		log(("Testing relay #" + relayId.toString() + " for 2.5s").info);
+		log(("Testing relay #" + relayId.toString() + " for 5s").info);
 
 		pins[relayId].write(1, (err, value) => {
 			if (err) throw err;
@@ -49,17 +49,14 @@ io.on('connection', (socket) => {
 				pins[relayId].write(0, (err, value) => {
 					if (err) throw err;
 				});
-			}, 2500);
+			}, 5000);
 		});
 	});
 
-	socket.on('set limit', (limit) => {
-		log((`Limit changed | Type: ${limit.type} | Value: ${limit.value}`).debug);
-
+	socket.on('set limit', (newLimit) => {
 		fs.readFile(dataFile, (err, data) => {
-			console.log(data);
 			let json = JSON.parse(data);
-			json.limit = limit;
+			json.relays[newLimit.relayId].limit = newLimit.limit;
 
 			fs.writeFile(dataFile, JSON.stringify(json), (err) => {
 				if (err) throw err;
@@ -187,36 +184,37 @@ function updateGpioState() {
 		const json = JSON.parse(data);
 		const currentPrice = json.prices.hourly[new Date().getHours()].price;
 		
-		/*let newState;
+		json.relays.forEach((relay, i) => {
+			let newState;
 
-		if (!json.limit) {
-			newState = 0;
+			if (!relay.limit || !relay.limit.type) {
+				newState = 0;
 
-		} else if (json.limit.type === 'under') {
-			newState = (currentPrice < json.limit.value) ? 1 : 0;
+			} else if (relay.limit.type === 'cheaperThan') {
+				newState = (currentPrice < relay.limit.value) ? 1 : 0;
 
-		} else if (json.limit.type === 'cheapestPrices') {
-			let cheapestHours = getCheapestHours(json.prices, json.limit.value);
-			const found = cheapestHours.includes(new Date().getHours());
-			
-			newState = (found) ? 1 : 0;
-		}
-		*/
-		
-		/* Only needed for production
-		output.read((err, currentState) => {
-			if (newState !== currentState) {
-
-				output.write(newState, (err) => {
-					if (err) throw err;
-					
-					const state = (newState === 1) ? 'On' : 'Off';
-					log(`Updated GPIO | State: ${state} | Current Price: ${currentPrice} | Type: ${json.limit.type} | Value: ${json.limit.value}`.debug);
-				});
+			} else if (relay.limit.type === 'cheapest') {
+				let cheapestHours = getCheapestHours(json.prices, relay.limit.value);
+				const found = cheapestHours.includes(new Date().getHours());
+				
+				newState = (found) ? 1 : 0;
 			}
-		});
-		*/
 
+			console.log("New state for " + relay.name + ": " + newState);
+
+			// Update pin state
+			pins[i].read((err, currentState) => {
+				if (newState !== currentState) {
+	
+					pins[i].write(newState, (err) => {
+						if (err) throw err;
+						
+						const state = (newState === 1) ? 'On' : 'Off';
+						log(`Updated GPIO | Relay #: ${i} | State: ${state} | Current Price: ${currentPrice} | Type: ${json.limit.type} | Value: ${json.limit.value}`.debug);
+					});
+				}
+			});
+		});
 	});
 }
 
