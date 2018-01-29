@@ -14,35 +14,9 @@
         if (typeof this.options.lineColors === 'function') {
             return this.options.lineColors.call(this, row, sidx, type);
         } else if (type === 'point') {
-            switch (this.options.checkYValues) {
-                case "eq":
-                    if (row.y[sidx] == this.options.yValueCheck) {
-                        return this.options.yValueCheckColor;
-                    }
-                    break;
-                case "gt":
-                    if (row.y[sidx] > this.options.yValueCheck) {
-                        return this.options.yValueCheckColor;
-                    }
-                    break;
-                case "lt":
-                    if (row.y[sidx] < this.options.yValueCheck) {
-                        return this.options.yValueCheckColor;
-                    }
-                    break;
-                case "gteg":
-                    if (row.y[sidx] >= this.options.yValueCheck) {
-                        return this.options.yValueCheckColor;
-                    }
-                    break;
 
-                case "lteg":
-                    if (row.y[sidx] <= this.options.yValueCheck) {
-                        return this.options.yValueCheckColor;
-                    }
-                    break;
-                default:
-                    return this.options.pointFillColors[sidx % this.options.pointFillColors.length] || this.options.lineColors[sidx % this.options.lineColors.length];
+            if (this.options.yValueCheck.includes(row.x)) {
+                return this.options.yValueCheckColor;
             }
 
             return this.options.pointFillColors[sidx % this.options.pointFillColors.length] || this.options.lineColors[sidx % this.options.lineColors.length];                   

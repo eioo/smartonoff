@@ -35,8 +35,7 @@ function createChart(goals = []) {
         
         goals: goals,
         goalLineColors: ['#ff0000'],
-        checkYValues: "lteg", // Lower than / equal (<=)
-        yValueCheck: yLimit,
+        yValueCheck: [2, 3, 7],
         yValueCheckColor: "#F47474"
     };
 
