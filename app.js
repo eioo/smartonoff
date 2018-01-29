@@ -1,6 +1,4 @@
-/* Only needed for production
 const gpio = require('onoff').Gpio;
-*/
 const colors = require('colors');
 const request = require('request');
 const express = require('express');
@@ -16,10 +14,11 @@ const app = express();
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
 
-/* Only needed for production
-const gpio = [new gpio()];
-const output = new gpio(14, 'out');
-*/
+const pins = [
+    new gpio(14, 'out'),
+    new gpio(15, 'out'),
+    new gpio(18, 'out')
+];
 
 colors.setTheme({
 	'warn':'yellow',
@@ -37,6 +36,21 @@ io.on('connection', (socket) => {
 		getPrices((prices) => {
 			socket.emit('prices', prices);	
 		});	
+	});
+
+	// Turns relay on for 2.5s for test purposes
+	socket.on('test relay', (relayId) => {
+		log(("Testing relay #" + relayId.toString() + " for 2.5s").info);
+
+		pins[relayId].write(1, (err, value) => {
+			if (err) throw err;
+
+			setTimeout(() => {
+				pins[relayId].write(0, (err, value) => {
+					if (err) throw err;
+				});
+			}, 2500);
+		});
 	});
 
 	socket.on('set limit', (limit) => {
@@ -80,22 +94,12 @@ function getPrices(callback) {
 	fs.readFile(dataFile, (err, data) => {
 		if (err) throw err;
 
-		const date = new Date();
-		const dateStr = date.toLocaleDateString('FI-fi');
-		
-		let json;
+		const dateStr = new Date().toLocaleDateString('FI-fi');
 
-		// Checks if file exists or not
+		// Try to parse file
 		try {
-			json = JSON.parse(data);
-		} catch (e) {
-			json = {};
-		}
-		
-		// Check if updated on the same day
-		if (json['lastUpdated'] === dateStr) {
-			callback(json);
-		} else {
+			callback(JSON.parse(data));
+		} catch (err) {
 			log('Fetching prices...'.info);
 
 			request(priceUrl, (error, response, body) => {
@@ -119,11 +123,27 @@ function getPrices(callback) {
 				}
 				
 				let newJson = {
-					lastUpdated: dateStr,
-					limit: (json.limit) ? json.limit : {'type':null, 'value': null},
-					prices: prices
+					prices: {
+						lastUpdated: dateStr,
+						hourly: prices
+					},
+					relays: []
 				}
 				
+				for (let i = 0; i < pins.length; i++) {
+					let relay = "Rele " + (i + 1).toString();
+
+					newJson.relays.push({
+						name: relay,
+						enabled: false,
+						limit: {
+							type: null,
+							Value: null
+						}
+					});
+				}
+					
+
 				fs.writeFile(dataFile, JSON.stringify(newJson), (err) => {
 					if (err) throw err;
 					log('Prices fetched succesfully!'.info);
@@ -133,11 +153,6 @@ function getPrices(callback) {
 			});
 		}
 	});
-}
-
-function getCurrentHour() {
-	const d = new Date();
-	return d.getHours();
 }
 
 function isConnected(callback) {
@@ -170,8 +185,9 @@ function updateGpioState() {
 		if (err) throw err;
 
 		const json = JSON.parse(data);
-		const currentPrice = json.prices[getCurrentHour()].price;
-		let newState;
+		const currentPrice = json.prices.hourly[new Date().getHours()].price;
+		
+		/*let newState;
 
 		if (!json.limit) {
 			newState = 0;
@@ -181,10 +197,11 @@ function updateGpioState() {
 
 		} else if (json.limit.type === 'cheapestPrices') {
 			let cheapestHours = getCheapestHours(json.prices, json.limit.value);
-			const found = cheapestHours.includes(getCurrentHour());
+			const found = cheapestHours.includes(new Date().getHours());
 			
 			newState = (found) ? 1 : 0;
 		}
+		*/
 		
 		/* Only needed for production
 		output.read((err, currentState) => {

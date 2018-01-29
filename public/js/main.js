@@ -5,7 +5,7 @@ let pricesTemp;
 function createChart(goals = []) {
     let yLimit = 0;
 
-    if (pricesTemp.limit.type === 'cheapestPrices') {
+    /* if (pricesTemp.limit.type === 'cheapestPrices') {
         if (pricesTemp.limit.value) {
             let cheapest = getCheapestHours(pricesTemp.limit.value, returnSorted = false);
             yLimit = cheapest[cheapest.length - 1].price;
@@ -13,12 +13,12 @@ function createChart(goals = []) {
     
     } else if (pricesTemp.limit.type === 'under') {
         yLimit = pricesTemp.limit.value;
-    }
+    }*/ 
 
 
     const options = {
         element: 'price-chart',
-        data: pricesTemp.prices,
+        data: pricesTemp.prices.hourly,
 
         xkey: 'hour',
         ykeys: ['price'],
@@ -46,7 +46,7 @@ function createChart(goals = []) {
 function updateChart() {
     console.log("Update chart");
 
-    // Pricelimit changed
+    /*// Pricelimit changed
     if (pricesTemp.limit.type === 'under') {
         if (pricesTemp.limit.value !== chart.options.goals) {
             if (pricesTemp.limit.value > 0) {
@@ -72,7 +72,7 @@ function updateChart() {
         chart.options.goals = [];
         
         chart.redraw();
-    }
+    }*/
 }
 
 function getMedian(arr) {
@@ -94,7 +94,7 @@ function isNumber(num) {
 }
 
 function getActiveHours(limit) {
-    return pricesTemp.prices.filter(price => price.price <= limit)
+    return pricesTemp.prices.hourly.filter(price => price.price <= limit)
         .map((elem) => {
             return elem.hour;
         })
@@ -104,7 +104,7 @@ function getActiveHours(limit) {
 }
 
 function getCheapestHours(howMany, returnSorted=true) {
-    let cheapest = pricesTemp.prices
+    let cheapest = pricesTemp.prices.hourly
         .concat() // Copy array
         .sort((a,b) => {
             return (a.price > b.price) ? 1 : ((b.price > a.price) ? -1 : 0);
@@ -121,6 +121,49 @@ function getCheapestHours(howMany, returnSorted=true) {
     }
 
     return cheapest;
+}
+
+function selectRelay(relayName) {
+    $('.btn-relay').removeClass('active');
+
+    let $btn = $(`.btn-relay[data-name='${relayName}']`);
+
+    const $limitInput       = $('#settings-limit-input');
+    const $limitLabel       = $('#settings-limit');
+    const $activeHoursLabel = $('#settings-active-hours');
+    const $cheapestCombo    = $('#hour-selector');
+    
+    const relay = pricesTemp.relays.find(x => x.name == relayName);
+    
+    if (relay.limit.type === "cheaperThan") {
+        if (relay.limit.value) {
+            $limitInput.val(relay.limit.value.toFixed(2));
+            $limitLabel.html(relay.limit.value.toFixed(2) + " snt/kWh");
+            $activeHoursLabel.html(getActiveHours(relay.limit.value).join(', '));
+        } else {
+            $limitInput.val('');
+        }
+
+        $cheapestCombo.val('disabled');
+    }
+    else if (relay.limit.type === "cheapest") {
+        if (relay.limit.value === 1) {
+            $limitLabel.html('Vain halvin tunti');
+        } else {
+            $limitLabel.html(relay.limit.value + ' halvinta tuntia');
+        }
+        
+        $activeHoursLabel.html(getCheapestHours(relay.limit.value, true).join(', '));
+        $cheapestCombo.val(relay.limit.value);
+        $limitInput.val('');
+    }
+    else {
+        $limitInput.val('');
+        $limitLabel.html('Ei asetettu');
+        $activeHoursLabel.html('Ei aktiivinen');
+    }
+    
+    $btn.addClass('active');
 }
 
 function clickHandler() {
@@ -148,6 +191,17 @@ function clickHandler() {
             updateUI();
         } else {
             showNotification('Arvo ei kelpaa!', 'danger');
+        }
+    });
+
+    $('.btn-relay').click(function() {
+        selectRelay($(this).attr('data-name'));
+    });
+
+    $('#btn-test').click(() => {
+        const selectedRelay = $('.btn-relay').index($('.active'));
+        if (selectedRelay !== -1) {
+            socket.emit('test relay', selectedRelay);
         }
     });
 
@@ -193,12 +247,11 @@ function showNotification(text, style = 'info') {
     });
 }
 
-
 function updateUI() {
     updateChart();
       
       /* Infobox */
-    const pricesWithoutHours = pricesTemp.prices.map((price) => { return price.price });
+    const pricesWithoutHours = pricesTemp.prices.hourly.map((price) => { return price.price });
 
     const highest = Math.max(...pricesWithoutHours).toFixed(2);
     const lowest  = Math.min(...pricesWithoutHours).toFixed(2);
@@ -211,50 +264,9 @@ function updateUI() {
     $('#info-average-price').html(average + ' snt/kWh');
 
     /* Settings */
-    const priceLimitInput       = $('#settings-limit-input');
-    const priceLimitElement     = $('#settings-limit');
-    const activeHoursElement    = $('#settings-active-hours');
-
-    const tempValue = pricesTemp.limit.value;
-
-    if (pricesTemp.limit.type === 'under') {
-        // Nykyinen rajoitus
-        if (pricesTemp.limit.value > 0) {
-            priceLimitElement.html(tempValue.toFixed(2) + ' snt/kWh');
-            priceLimitInput.val(tempValue.toFixed(2));
-        } else {
-            priceLimitElement.html('Ei asetettu');
-        }
-
-        // Aktiiviset tunnit
-        const activeHours = getActiveHours(tempValue).join(', ');
-    
-        if (activeHours) {
-            activeHoursElement.html(activeHours);
-        } else {
-            activeHoursElement.html('Ei aktiivinen');
-        }
-    } else if(pricesTemp.limit.type === 'cheapestPrices') {
-        // Nykyinen rajoitus
-        if (pricesTemp.limit.value > 0) {
-            priceLimitElement.html(pricesTemp.limit.value + ' halvinta tuntia');
-        } else {
-            priceLimitElement.html('Ei asetettu');
-        }
-
-        // Aktiiviset tunnit
-        const activeHours = getCheapestHours(tempValue).join(', ');
-        
-        if (activeHours) {
-            activeHoursElement.html(activeHours);
-        } else {
-            activeHoursElement.html('Ei aktiivinen');
-        }
-    } else {
-        priceLimitElement.html('Ei asetettu');
-        activeHoursElement.html('Ei aktiivinen');
-    }
-
+    const $priceLimitInput       = $('#settings-limit-input');
+    const $priceLimitElement     = $('#settings-limit');
+    const $activeHoursElement    = $('#settings-active-hours');
 }
 
 function socketListener() {
@@ -263,11 +275,12 @@ function socketListener() {
         pricesTemp = prices;
 
         if (!chart) {
-            if (pricesTemp.limit.type === 'under') {
+            /*if (pricesTemp.limit.type === 'under') {
                 chart = createChart([pricesTemp.limit.value])
             } else {
                 chart = createChart();
-            }
+            }*/
+                chart = createChart();
         }
 
         updateUI();

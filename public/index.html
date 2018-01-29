@@ -8,7 +8,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Sähkörajoitin 4000</title>
+    <title>Smart On/Off</title>
 
     <!-- Bootstrap Core CSS -->
     <link href="./css/bootstrap.min.css" rel="stylesheet">
@@ -43,7 +43,7 @@
         <!-- Navigation -->
         <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
             <div class="navbar-header">
-                <a class="navbar-brand" href="index.html">Sähkörajoitin 4000</a>
+                <a class="navbar-brand" href="index.html">Smart On/Off</a>
             </div>
 
             <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
@@ -140,23 +140,26 @@
                         </div>
                         <div class="panel-body">
                             <form>
-                                <div class="row">
+                                <p>
+                                    <button type="button" class="btn btn-outline btn-primary btn-relay" data-name="Rele 1"><i class="fa fa-bolt" aria-hidden="true"></i> Rele 1</button>
+                                    <button type="button" class="btn btn-outline btn-primary btn-relay" data-name="Rele 2"><i class="fa fa-bolt" aria-hidden="true"></i> Rele 2</button>
+                                    <button type="button" class="btn btn-outline btn-primary btn-relay" data-name="Rele 3"><i class="fa fa-bolt" aria-hidden="true"></i> Rele 3</button>
 
-                                    <div class="form-group col-lg-5">
-                                        <label>Mukautettu</label>
+                                    <button type="button" id="btn-save" class="btn btn-success"><i class="fa fa-floppy-o" aria-hidden="true"></i> Tallenna</button>
+                                    <button type="button" id="btn-test" class="btn btn-warning"><i class="fa fa-play-circle" aria-hidden="true"></i> Testaa</button>
+                                </p>
+
+                                <div class="row">
+                                    <div class="form-group col-lg-7">
+                                        <label>Hinta alle</label>
                                         <div class="input-group">
-                                            <span class="input-group-addon">snt/kWh</span>
                                             <input id="settings-limit-input" type="text" class="form-control" placeholder="0.00">
-                                            <span class="input-group-btn">
-                                                <button id="btn-set-limit" class="btn btn-primary btn-wider">
-                                                    <i class="fa fa-floppy-o" aria-hidden="true"></i>
-                                                </button>
-                                            </span>
+                                            <span class="input-group-addon">snt/kWh</span>
                                         </div>
 
                                         <label class="mt-label">Vain halvimmat</label>
                                         <select id="hour-selector" class="form-control">
-                                            <option disabled selected>Valitse vaihtoehto</option>
+                                            <option value="disabled" disabled selected>Valitse vaihtoehto</option>
                                             <option value="0">Pois päältä</option>
                                             <option value="1">Vain halvin tunti</option>
                                             <option value="2">2 halvinta tuntia</option>
@@ -188,25 +191,18 @@
 
                                     <div class="col-lg-1"></div>
 
-                                    <div class="form-group col-lg-3">
+                                    <div class="form-group col-lg-4">
                                         <label>Nykyinen rajoitus</label>
                                         <p class="form-control-static">
                                             <span id="settings-limit" class="text-muted">-</span>
                                         </p>
-                                    </div>
-
-                                    <div class="form-group col-lg-3">
                                         <label>Aktiiviset tunnit</label>
                                         <p class="form-control-static">
                                             <span id="settings-active-hours" class="text-muted">-</span>
                                         </p>
                                     </div>
                                 </div>
-                                <div class="row">
-                                    <div class="form-group col-lg-12">
 
-                                    </div>
-                                </div>
                             </form>
 
                         </div>
