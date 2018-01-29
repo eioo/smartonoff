@@ -33,8 +33,10 @@ app.use(express.static('public'));
 io.on('connection', (socket) => {
 	log('User connected'.debug);
 
-	getPrices((prices) => {
-		socket.emit('prices', prices);
+	socket.on('get prices', () => {
+		getPrices((prices) => {
+			socket.emit('prices', prices);	
+		});	
 	});
 
 	socket.on('set limit', (limit) => {
@@ -217,11 +219,6 @@ isConnected(() => {
 
 	// Turn gpio on / off every hour on 0:00
 	let gpioJ = schedule.scheduleJob('0 * * * *', () => {
-		updateGpioState();
-	});
-
-	getPrices((prices) => {
-		io.sockets.emit('prices', prices);
 		updateGpioState();
 	});
 });

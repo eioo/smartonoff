@@ -44,7 +44,35 @@ function createChart(goals = []) {
 }
 
 function updateChart() {
-    
+    console.log("Update chart");
+
+    // Pricelimit changed
+    if (pricesTemp.limit.type === 'under') {
+        if (pricesTemp.limit.value !== chart.options.goals) {
+            if (pricesTemp.limit.value > 0) {
+                chart.options.yValueCheck = pricesTemp.limit.value;
+                chart.options.goals = [pricesTemp.limit.value];
+            } else {
+                chart.options.yValueCheck = 0;
+                chart.options.goals = [];
+            }
+        }
+
+        chart.redraw();
+
+    } else if (pricesTemp.limit.type === 'cheapestPrices') {
+        let yLimit = 0;
+
+        if (pricesTemp.limit.value) {
+            let cheapest = getCheapestHours(pricesTemp.limit.value, returnSorted = false);
+            yLimit = cheapest[cheapest.length - 1].price;
+        }
+        
+        chart.options.yValueCheck = yLimit;
+        chart.options.goals = [];
+        
+        chart.redraw();
+    }
 }
 
 function getMedian(arr) {
@@ -167,33 +195,7 @@ function showNotification(text, style = 'info') {
 
 
 function updateUI() {
-    // Pricelimit changed
-    if (pricesTemp.limit.type === 'under') {
-        if (pricesTemp.limit.value !== chart.options.goals) {
-            if (pricesTemp.limit.value > 0) {
-                chart.options.yValueCheck = pricesTemp.limit.value;
-                chart.options.goals = [pricesTemp.limit.value];
-            } else {
-                chart.options.yValueCheck = 0;
-                chart.options.goals = [];
-            }
-        }
-
-        chart.redraw();
-
-    } else if (pricesTemp.limit.type === 'cheapestPrices') {
-        let yLimit = 0;
-
-        if (pricesTemp.limit.value) {
-            let cheapest = getCheapestHours(pricesTemp.limit.value, returnSorted = false);
-            yLimit = cheapest[cheapest.length - 1].price;
-        }
-        
-        chart.options.yValueCheck = yLimit;
-        chart.options.goals = [];
-        
-        chart.redraw();
-    }
+    updateChart();
       
       /* Infobox */
     const pricesWithoutHours = pricesTemp.prices.map((price) => { return price.price });
@@ -255,10 +257,11 @@ function updateUI() {
 
 }
 
-function socketHandler() {
+function socketListener() {
     socket.on('prices', (prices) => {
+        console.log("Socket: prices");
         pricesTemp = prices;
-        
+
         if (!chart) {
             if (pricesTemp.limit.type === 'under') {
                 chart = createChart([pricesTemp.limit.value])
@@ -272,6 +275,8 @@ function socketHandler() {
 }
 
 $(() => {
-    socketHandler();
+    socket.emit('get prices');
+
+    socketListener();
     clickHandler();
 });
