@@ -5,6 +5,14 @@
     z-index: 9999;
 }
 
+.page-header {
+    margin-top: 0px !important;
+}
+#page-wrapper {
+    margin-left: 0px !important;
+    overflow-y: hidden !important;
+}
+
 .mt-label {
     margin-top: 10px !important;
 }

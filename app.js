@@ -5,6 +5,7 @@ const express = require('express');
 const path = require('path');
 const fs = require('fs');
 const schedule = require('node-schedule');
+const { exec } = require('child_process');
 
 const priceUrl = 'https://fortum.heydaypro.com/tarkka/graph.php';
 const dataFile = 'prices.json';
@@ -14,11 +15,14 @@ const app = express();
 const http = require('http').Server(app);
 const io = require('socket.io')(http);
 
+
 const pins = [
     new gpio(14, 'out'),
     new gpio(15, 'out'),
     new gpio(18, 'out')
 ];
+
+process.chdir(__dirname);
 
 colors.setTheme({
 	'warn':'yellow',
@@ -89,7 +93,11 @@ function getPrices(callback) {
 
 	// Load prices from file
 	fs.readFile(dataFile, (err, data) => {
-		if (err) throw err;
+		if (err) {
+			if (err.code !== 'ENOENT') {
+				throw err;
+			}
+		}
 
 		const dateStr = new Date().toLocaleDateString('FI-fi');
 
@@ -146,19 +154,9 @@ function getPrices(callback) {
 					log('Prices fetched succesfully!'.info);
 				});
 
+				updateGpioState();
 				callback(prices);
 			});
-		}
-	});
-}
-
-function isConnected(callback) {
-	require('dns').resolve('www.google.com', (err) => {
-		if (!err) {
-			callback();
-		} else {
-			log('No internet connection! Please connect to Ethernet or Wi-Fi network. Exiting...'.error);
-			process.exit()
 		}
 	});
 }
@@ -179,7 +177,11 @@ function getCheapestHours(prices, howMany) {
 
 function updateGpioState() {
 	fs.readFile(dataFile, (err, data) => {
-		if (err) throw err;
+		if (err) {
+			if (err.code === 'ENOENT') {
+				return;
+			}
+		}
 
 		const json = JSON.parse(data);
 		const currentPrice = json.prices.hourly[new Date().getHours()].price;
@@ -194,14 +196,11 @@ function updateGpioState() {
 				newState = (currentPrice < relay.limit.value) ? 1 : 0;
 
 			} else if (relay.limit.type === 'cheapest') {
-				let cheapestHours = getCheapestHours(json.prices, relay.limit.value);
+				let cheapestHours = getCheapestHours(json.prices.hourly, relay.limit.value);
 				const found = cheapestHours.includes(new Date().getHours());
 				
 				newState = (found) ? 1 : 0;
 			}
-
-			console.log("New state for " + relay.name + ": " + newState);
-
 			// Update pin state
 			pins[i].read((err, currentState) => {
 				if (newState !== currentState) {
@@ -210,7 +209,7 @@ function updateGpioState() {
 						if (err) throw err;
 						
 						const state = (newState === 1) ? 'On' : 'Off';
-						log(`Updated GPIO | Relay #: ${i} | State: ${state} | Current Price: ${currentPrice} | Type: ${json.limit.type} | Value: ${json.limit.value}`.debug);
+						log(`Updated GPIO | Name: ${relay.name} | State: ${state} | Current Price: ${currentPrice} | Type: ${relay.limit.type} | Value: ${relay.limit.value}`.debug);
 					});
 				}
 			});
@@ -218,23 +217,56 @@ function updateGpioState() {
 	});
 }
 
-log('Checking internet connection'.info);
+function openBrowser() {
+	const command = 'chromium-browser http://localhost:3000 --start-fullscreen';
+	
+	exec(command, (err, stdout, stderr) => {
+		if (err) {
+			return;
+		}
+	});	
+}
 
-isConnected(() => {
-	http.listen(httpPort, () => {
-		log('Internet connection OK. Server started on port 3000'.info);
+function isConnected(callback) {
+	require('dns').resolve('www.google.com', (err) => {
+		if (!err) {
+			callback(true);
+		} else {
+			callback(false);
+		}
 	});
+}
 
-	/* Get prices every day on 0:01 */
-	let j = schedule.scheduleJob('0 1 * * *', () => {
-		getPrices((prices) => {
-			io.sockets.emit('prices', prices);
-		});
-	});
+function startServer() {
+	log('Checking internet connection'.info);
 
-	// Turn gpio on / off every hour on 0:00
-	let gpioJ = schedule.scheduleJob('0 * * * *', () => {
-		updateGpioState();
+	isConnected((connected) => {
+		if (connected) {
+			http.listen(httpPort, () => {
+				log('Internet connection OK. Server started on port 3000'.info);
+			});
+
+			/* Get prices every day on 0:01 */
+			let j = schedule.scheduleJob('0 1 * * *', () => {
+				getPrices((prices) => {
+					io.sockets.emit('prices', prices);
+				});
+			});
+
+			// Turn gpio on / off every hour on 0:00
+			let gpioJ = schedule.scheduleJob('0 * * * *', () => {
+				updateGpioState();
+			});
+
+			updateGpioState();
+			openBrowser();
+		} else {
+			log("No internet connection. Retrying in 5 seconds.".warn);
+			setTimeout(startServer, 5000);
+		}
 	});
-});
+}
+
+startServer();
+
 
