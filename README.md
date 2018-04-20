@@ -35,4 +35,4 @@ hdmi_drive=1
 
 To autostart the script on boot, add following command to `~/.config/lxsession/LXDE-pi/autostart`
 
-`@node {PATH TO PROJECT DIR}/app.js`
+@lxterminal -e "/dir/to/smartonoff/start.sh"
