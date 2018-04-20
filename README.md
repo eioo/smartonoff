@@ -31,6 +31,8 @@ hdmi_cvt 1024 600 60 6 0 0 0
 hdmi_drive=1
 ```
 
+I use addon called [Virtual Keyboard](https://chrome.google.com/webstore/detail/virtual-keyboard/pflmllfnnabikmfkkaddkoolinlfninn) to enable touch keyboard on chrome. Recommended zoom level is 120%
+
 ### Start on boot
 
 To autostart the script on boot, add following command to `~/.config/lxsession/LXDE-pi/autostart`
