@@ -2,12 +2,35 @@
 
 Can turn relays on / off based on current electricity prices (Fortum.fi), temperature or many other options. Works with Raspberry Pi!
 
-### Installing
+### Requirements
+
+Required packages:
+* `node.js` and `npm`
+* `chromium-browser`
+
+### Installing & Running
+
 ```
 npm install
-npm install -g gulp-cli
+npm start
 ```
-### Running
+
+### LCD Display
+
+The screen I'm using: [RB-LCD-7-2](https://www.conrad.de/de/raspberry-pi-display-modul-rb-lcd-7-2-raspberry-pi-banana-pi-cubieboard-pcduino-1543962.html)
+
+Add text below to `/boot/config.txt` to set display mode correctly.
+
 ```
-gulp
+max_usb_current=1
+hdmi_group=2
+hdmi_mode=87
+hdmi_cvt 1024 600 60 6 0 0 0
+hdmi_drive=1
 ```
+
+### Start on boot
+
+To autostart the script on boot, add following command to `~/.config/lxsession/LXDE-pi/autostart`
+
+`@node {PATH TO PROJECT DIR}/app.js`
