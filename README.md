@@ -10,6 +10,8 @@ Required packages:
 
 ### Installing & Running
 
+You need to be connected to internet. Ethernet and wireless both work.
+
 ```
 npm install
 npm start
