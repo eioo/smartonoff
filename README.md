@@ -6,7 +6,7 @@ Can turn relays on / off based on current electricity prices (Fortum.fi), temper
 
 Required packages:
 * `node.js` and `npm`
-* `xvkbd`
+* `xvkbd` unix package
 * `chromium-browser`
 
 ## Installing & Running
@@ -28,8 +28,6 @@ hdmi_drive=1
 ```
 
 I use addon called [Virtual Keyboard](https://chrome.google.com/webstore/detail/virtual-keyboard/pflmllfnnabikmfkkaddkoolinlfninn) to enable touch keyboard on chrome. Recommended zoom level is 120%
-
-You need to run `xrdb xvkbd-settings` to load settings for `xvkbd`. It's used to provide virtual keyboard if device is not connected to internet.
 
 ### Start on boot
 

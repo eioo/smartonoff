@@ -237,6 +237,21 @@ function isConnected(callback) {
 	});
 }
 
+function openXvkbd() {
+	exec('pidof xvkbd', (err, stdout, stderr) => {
+		if (!stdout) {
+			exec('xrdb ' + path.resolve(__dirname, 'xvkbd-settings'),
+				(err, stdout, stderr) => {
+				exec('xvkbd');
+			});
+		}
+	});
+}
+
+function closeXvkbd() {
+	exec('killall xvkbd');
+}
+
 function startServer() {
 	log('Checking internet connection'.info);
 
@@ -246,6 +261,8 @@ function startServer() {
 				log('Internet connection OK. Server started on port 3000'.info);
 			});
 
+			closeXvkbd();
+
 			/* Get prices every day on 0:01 */
 			let j = schedule.scheduleJob('0 1 * * *', () => {
 				getPrices((prices) => {
@@ -253,16 +270,19 @@ function startServer() {
 				});
 			});
 
-			// Turn gpio on / off every hour on 0:00
+			// Update GPIO state every hour
 			let gpioJ = schedule.scheduleJob('0 * * * *', () => {
 				updateGpioState();
 			});
 
 			updateGpioState();
 			openBrowser();
+
 		} else {
 			log("No internet connection. Retrying in 5 seconds.".warn);
 			setTimeout(startServer, 5000);
+
+			openXvkbd();
 		}
 	});
 }
