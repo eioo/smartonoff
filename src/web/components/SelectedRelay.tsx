@@ -5,7 +5,9 @@ class SelectedRelay extends Component {
   render() {
     return (
       <Segment>
-        Valittu rele
+        
+        lol
+
       </Segment>
     );
   }

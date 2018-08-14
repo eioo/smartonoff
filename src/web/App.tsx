@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Container, Grid } from 'semantic-ui-react';
 
-import Graph from './components/Graph';
+import Chart from './components/Chart';
 import InfoBox from './components/InfoBox';
 import Settings from './components/Settings';
 import SelectedRelay from './components/SelectedRelay';
@@ -11,10 +11,10 @@ class App extends Component {
     return (
       <Container style={{ marginTop: '20px'}}>
 
-        <Grid>
+        <Grid stretched>
           <Grid.Row>
             <Grid.Column width={12}>
-              <Graph />
+              <Chart />
             </Grid.Column>
             <Grid.Column width={4}>
               <InfoBox />
