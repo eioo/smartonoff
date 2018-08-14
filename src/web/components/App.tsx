@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import { Container, Grid } from 'semantic-ui-react';
 
-import Chart from './components/Chart';
-import InfoBox from './components/InfoBox';
-import Settings from './components/Settings';
-import SelectedRelay from './components/SelectedRelay';
+import Chart from './Chart';
+import InfoBox from './InfoBox';
+import Settings from './Settings';
+import SelectedRelay from './SelectedRelay';
 
 class App extends Component {
   render() {
