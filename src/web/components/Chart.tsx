@@ -37,8 +37,7 @@ class Chart extends Component<{}, IChartState> {
             pointHoverBorderColor: 'rgba(220,220,220,1)',
             pointHoverBorderWidth: 2,
             pointRadius: 1,
-            pointHitRadius: 10,
-            data: [1,2,3,1]
+            pointHitRadius: 10
           }
         ]
       },
@@ -116,7 +115,6 @@ class Chart extends Component<{}, IChartState> {
     const prices = await response.json();
 
     this.updateChartData(prices);
-    console.log(prices);
 
     this.setState({
       chartVisible: true
