@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Header } from 'semantic-ui-react';
 
 interface ISelectedRelayProps {
-  activeRelay: number | undefined
+  activeRelay: number | undefined;
 }
 
 class SelectedRelay extends Component<ISelectedRelayProps, {}> {

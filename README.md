@@ -3,7 +3,8 @@ Can turn relays on / off based on current electricity prices, temperature or man
 
 ## TODO
 
-* Check performance on Raspberry Pi (Maybe use static css file for semantic ui)
+[x] Check performance on Raspberry Pi (Maybe use static css file for semantic ui)
+[ ] Add TSLint
 
 ## Installation & running
 

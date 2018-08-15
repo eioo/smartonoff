@@ -1,16 +1,28 @@
 import React, { Component } from 'react';
-import { Segment, Button, Label, ButtonProps, Tab, Grid } from 'semantic-ui-react';
+import { Segment, Button, Label, ButtonProps, Tab, Grid, Transition } from 'semantic-ui-react';
 import SelectedRelay from './SelectedRelay';
+import ByPrice from './settings/ByPrice';
+import ByCheapest from './settings/ByCheapest';
+import ByTemperature from './settings/ByTemperature';
 
 interface ISettingsState {
-  activeRelay: number | undefined,
-  testingRelay: boolean
+  activeRelay: number | undefined;
+  testingRelay: boolean;
 }
 
-const tabPanes = [
-  { menuItem: 'Hinnan mukaan', render: () => <Tab.Pane>Hinta</Tab.Pane> },
-  { menuItem: 'Halvimmat', render: () => <Tab.Pane>Tab 2 Content</Tab.Pane> },
-  { menuItem: 'Lämpötila', render: () => <Tab.Pane>Tab 3 Content</Tab.Pane> },
+const tabs = [
+  {
+    name: 'Hinnan mukaan',
+    component: ByPrice
+  },
+  {
+    name: 'Halvimmat',
+    component: ByCheapest
+  },
+  {
+    name: 'Lämpötila',
+    component: ByTemperature
+  }
 ];
 
 class Settings extends Component<{}, ISettingsState> {
@@ -19,7 +31,7 @@ class Settings extends Component<{}, ISettingsState> {
     
     this.state = {
       activeRelay: undefined,
-      testingRelay: false
+      testingRelay: false,
     }
   }
 
@@ -45,46 +57,65 @@ class Settings extends Component<{}, ISettingsState> {
   }
 
   createRelayButtons() {
-    const buttons = [];
-
-    for (let i = 1; i < 4; i++) {
-      buttons.push(
-        <Button
-          id={i}
-          key={i}
-          basic={this.state.activeRelay !== i}
-          onClick={this.handleSelectRelay}>
-          Rele {i}
-        </Button>
-      );
-    }
+    const buttons = [1,2,3].map(i => (
+      <Button
+        id={i}
+        key={i}
+        basic={this.state.activeRelay !== i}
+        onClick={this.handleSelectRelay}>
+        Rele {i}
+      </Button>
+    ));
 
     return buttons;
   }
 
+  createTabs() {
+    const panes = tabs.map(tab => {
+      return {
+        menuItem: tab.name,
+        render: () => {
+          return (
+            <Tab.Pane>
+              <tab.component activeRelay={this.state.activeRelay} />
+            </Tab.Pane>
+          )
+        }
+      }
+    });
+
+    return <Tab panes={panes} style={{ marginTop: '10px' }} />
+  }
+  
   render() {
     return (
       <Segment>
         <Grid>
           <Grid.Column width={12}>
             <Button
-              icon='save'
               color='green'
+              disabled={!this.state.activeRelay}
+              icon='save'
               label='Tallenna' />
             
             <Button
-              icon='lightning'
               color='yellow'
+              disabled={!this.state.activeRelay}
+              icon='lightning'
               label='Testaa'
               loading={this.state.testingRelay}
               onClick={this.handleTestRelay}
-              style={{ marginRight: '8px' }} />
+              style={{ marginRight: '10px' }} />
             
             {this.createRelayButtons()}
-
-            <Label pointing='left'>Valittu rele</Label>
-            <Tab panes={tabPanes} style={{ marginTop: '10px' }}/>
+            {
+              !this.state.activeRelay ?
+              <Label pointing='left' color='purple'>Valitse rele</Label> :
+              null
+            }
+            {this.createTabs()}
           </Grid.Column>
+
           <Grid.Column width={4} stretched>
             <SelectedRelay activeRelay={this.state.activeRelay} />
           </Grid.Column>

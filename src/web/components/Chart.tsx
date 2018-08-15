@@ -46,6 +46,7 @@ class Chart extends Component<IChartProps, IChartState> {
         ]
       },
       options: {
+
         legend: {
           display: false
         },
@@ -57,6 +58,7 @@ class Chart extends Component<IChartProps, IChartState> {
             },
             ticks: {
               beginAtZero: true,
+              stepSize: 1,
               max: 10,
               min: 0
             }
