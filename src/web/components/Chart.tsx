@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import { Segment, Header, Loader } from 'semantic-ui-react';
+import { Segment, Header, Loader, Grid } from 'semantic-ui-react';
 import { Line } from 'react-chartjs-2';
 import { ChartOptions, ChartData, ChartTooltipItem, ChartTooltipOptions } from 'chart.js';
 import config from '../../../config';
+import InfoBox from './InfoBox';
 
 interface IChartState {
   chartVisible: boolean;
@@ -96,6 +97,7 @@ class Chart extends Component<{}, IChartState> {
     copyData.datasets[0].data = newData;
     copyOptions.scales.yAxes[0].ticks = {
       ...copyOptions.scales.yAxes[0].ticks,
+      min: Math.floor(Math.min(...newData)) - 1,
       max: Math.ceil(Math.max(...newData)) + 1
     };
     
@@ -110,7 +112,7 @@ class Chart extends Component<{}, IChartState> {
       chartVisible: false
     });
 
-    const endPoint = `http://localhost:${config.apiPort}/prices`;
+    const endPoint = `http://${config.apiHost}:${config.apiPort}/prices`;
     const response = await fetch(endPoint);
     const prices = await response.json();
 
@@ -128,12 +130,19 @@ class Chart extends Component<{}, IChartState> {
   render() {
     return (
       <Segment>
-        <Header as='h3' style={{ margin: '5px 0px 15px 5px' }}>Smart On/Off</Header>
+        <Grid>
+          <Grid.Column width={12}>
+            <Header as='h3' style={{ margin: '5px 0px 15px 5px' }}>Smart On/Off</Header>
 
-        <Loader active={!this.state.chartVisible} size='huge' />
-        <div style={{ display: (this.state.chartVisible ? 'block' : 'none') }}>
-          <Line data={this.state.data} options={this.state.options} />
-        </div>
+            <Loader active={!this.state.chartVisible} size='huge' />
+            <div style={{ display: (this.state.chartVisible ? 'block' : 'none') }}>
+              <Line data={this.state.data} options={this.state.options} />
+            </div>
+          </Grid.Column>
+          <Grid.Column width={4} stretched>
+            <InfoBox />
+          </Grid.Column>
+        </Grid>
       </Segment>
     );
   }

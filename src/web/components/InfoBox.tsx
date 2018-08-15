@@ -1,20 +1,13 @@
 import React, { Component } from 'react';
-import { Segment, Table, Header, Message } from 'semantic-ui-react';
+import { Table, Header, Message } from 'semantic-ui-react';
 
 class InfoBox extends Component {
   render() {
     return (
-      <Segment>
+      <div>
         <Header as='h4' style={{ margin: '5px 0px 0px 0px' }}>Hinnat (c/kWh)</Header>
 
         <Table basic='very' celled collapsing style={{ width: '100%' }}>
-          {/*<Table.Header>
-            <Table.Row>
-              <Table.HeaderCell></Table.HeaderCell>
-              <Table.HeaderCell>c/kWh</Table.HeaderCell>
-            </Table.Row>
-          </Table.Header>*/}
-
           <Table.Body>
             <Table.Row>
               <Table.Cell>
@@ -51,10 +44,10 @@ class InfoBox extends Component {
           </Table.Body>
         </Table>
 
-        <Message size='mini' style={{ position: 'absolute', bottom: 5, left: 5, right: 5 }}>
+        <Message size='mini' style={{ position: 'absolute', bottom: 10, left: 10, right: 10 }}>
           Sähkön hinnat tarjoaa Fortum.fi
         </Message>
-      </Segment>
+      </div>
     );
   }
 }

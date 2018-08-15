@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Segment, Button, Label, ButtonProps, Tab } from 'semantic-ui-react';
+import { Segment, Button, Label, ButtonProps, Tab, Grid } from 'semantic-ui-react';
+import SelectedRelay from './SelectedRelay';
 
 interface ISettingsState {
   selectedRelay: number,
@@ -64,23 +65,30 @@ class Settings extends Component<{}, ISettingsState> {
   render() {
     return (
       <Segment>
-        <Button
-          icon='save'
-          color='green'
-          label='Tallenna' />
-        
-        <Button
-          icon='lightning'
-          color='yellow'
-          label='Testaa'
-          loading={this.state.testingRelay}
-          onClick={this.handleTestRelay}
-          style={{ marginRight: '8px' }} />
-        
-        {this.createRelayButtons()}
+        <Grid>
+          <Grid.Column width={12}>
+            <Button
+              icon='save'
+              color='green'
+              label='Tallenna' />
+            
+            <Button
+              icon='lightning'
+              color='yellow'
+              label='Testaa'
+              loading={this.state.testingRelay}
+              onClick={this.handleTestRelay}
+              style={{ marginRight: '8px' }} />
+            
+            {this.createRelayButtons()}
 
-        <Label pointing='left'>Valittu rele</Label>
-        <Tab panes={tabPanes} style={{ marginTop: '10px' }}/>
+            <Label pointing='left'>Valittu rele</Label>
+            <Tab panes={tabPanes} style={{ marginTop: '10px' }}/>
+          </Grid.Column>
+          <Grid.Column width={4} stretched>
+            <SelectedRelay />
+          </Grid.Column>
+        </Grid>
       </Segment>
     );
   }

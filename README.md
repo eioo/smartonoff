@@ -7,5 +7,7 @@ Can turn relays on / off based on current electricity prices, temperature or man
 
 ## Installation & running
 
+* Setup `config.ts` on project root.
+* `npm i -g parcel-bundler` or `yarn global add parcel-bundler`
 * `npm install` or `yarn install`
 * `npm run develop` or `yarn develop`

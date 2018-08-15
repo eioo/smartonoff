@@ -1,14 +1,14 @@
 import React, { Component } from 'react';
-import { Segment } from 'semantic-ui-react';
+import { Header } from 'semantic-ui-react';
 
 class SelectedRelay extends Component {
   render() {
     return (
-      <Segment>
-        
-        lol
-
-      </Segment>
+      <div>
+        <Header as='h4'>Valittu rele</Header>
+        <p>Relettä ei ole valittu.</p>
+        <p>Ole hyvä ja valitse rele painamalla vasemmalta löytyviä painikkeita</p>
+      </div>
     );
   }
 }
