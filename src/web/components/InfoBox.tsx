@@ -1,7 +1,20 @@
 import React, { Component } from 'react';
 import { Table, Header, Message } from 'semantic-ui-react';
+import { getAverage, getMedian } from '../../lib/mathHelper';
 
-class InfoBox extends Component {
+interface IInfoBoxProps {
+  prices: Array<number>;
+}
+
+class InfoBox extends Component<IInfoBoxProps, {}> {
+  constructor(props: IInfoBoxProps) {
+    super(props);
+
+    this.state = {
+      prices: []
+    };
+  }
+
   render() {
     return (
       <div>
@@ -14,7 +27,7 @@ class InfoBox extends Component {
                 Korkein
               </Table.Cell>
               <Table.Cell>
-                0.00
+                { Math.max(...this.props.prices).toFixed(2) }
               </Table.Cell>
             </Table.Row>
             <Table.Row>
@@ -22,15 +35,7 @@ class InfoBox extends Component {
                 Alhaisin
               </Table.Cell>
               <Table.Cell>
-                0.00
-              </Table.Cell>
-            </Table.Row>
-            <Table.Row>
-              <Table.Cell>
-                Mediaani
-              </Table.Cell>
-              <Table.Cell>
-                0.00
+                { Math.min(...this.props.prices).toFixed(2) }
               </Table.Cell>
             </Table.Row>
             <Table.Row>
@@ -38,7 +43,15 @@ class InfoBox extends Component {
                 Keskiarvo
               </Table.Cell>
               <Table.Cell>
-                0.00
+                { getAverage(this.props.prices).toFixed(2) }
+              </Table.Cell>
+            </Table.Row>
+            <Table.Row>
+              <Table.Cell>
+                Mediaani
+              </Table.Cell>
+              <Table.Cell>
+                { getMedian(this.props.prices).toFixed(2) }
               </Table.Cell>
             </Table.Row>
           </Table.Body>

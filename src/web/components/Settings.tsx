@@ -3,7 +3,7 @@ import { Segment, Button, Label, ButtonProps, Tab, Grid } from 'semantic-ui-reac
 import SelectedRelay from './SelectedRelay';
 
 interface ISettingsState {
-  selectedRelay: number,
+  activeRelay: number | undefined,
   testingRelay: boolean
 }
 
@@ -18,7 +18,7 @@ class Settings extends Component<{}, ISettingsState> {
     super(props);
     
     this.state = {
-      selectedRelay: 0,
+      activeRelay: undefined,
       testingRelay: false
     }
   }
@@ -26,11 +26,11 @@ class Settings extends Component<{}, ISettingsState> {
   handleSelectRelay = (e: React.MouseEvent, data: ButtonProps) => {
     e.preventDefault();
     this.setState({
-      selectedRelay: data.id
+      activeRelay: data.id
     });
   }
 
-  handleTestRelay = (e: React.MouseEvent, data: ButtonProps) => {
+  handleTestRelay = (e: React.MouseEvent) => {
     e.preventDefault();
 
     this.setState({
@@ -52,7 +52,7 @@ class Settings extends Component<{}, ISettingsState> {
         <Button
           id={i}
           key={i}
-          basic={this.state.selectedRelay !== i}
+          basic={this.state.activeRelay !== i}
           onClick={this.handleSelectRelay}>
           Rele {i}
         </Button>
@@ -86,7 +86,7 @@ class Settings extends Component<{}, ISettingsState> {
             <Tab panes={tabPanes} style={{ marginTop: '10px' }}/>
           </Grid.Column>
           <Grid.Column width={4} stretched>
-            <SelectedRelay />
+            <SelectedRelay activeRelay={this.state.activeRelay} />
           </Grid.Column>
         </Grid>
       </Segment>

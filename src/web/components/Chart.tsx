@@ -2,21 +2,24 @@ import React, { Component } from 'react';
 import { Segment, Header, Loader, Grid } from 'semantic-ui-react';
 import { Line } from 'react-chartjs-2';
 import { ChartOptions, ChartData, ChartTooltipItem, ChartTooltipOptions } from 'chart.js';
-import config from '../../../config';
 import InfoBox from './InfoBox';
 
+interface IChartProps {
+  prices: Array<number>;
+}
+
 interface IChartState {
-  chartVisible: boolean;
+  pricesLoading: boolean;
   data: ChartData;
   options: ChartOptions;
 };
 
-class Chart extends Component<{}, IChartState> {
-  constructor(props: {}) {
+class Chart extends Component<IChartProps, IChartState> {
+  constructor(props: IChartProps) {
     super(props);
 
     this.state = {
-      chartVisible: false,
+      pricesLoading: true,
       data: {
         labels: Array.from(Array(24).keys()).map(x => x.toString()),
         datasets: [
@@ -78,7 +81,7 @@ class Chart extends Component<{}, IChartState> {
           },
           callbacks: {
             label: (tooltipItem: ChartTooltipItem) => tooltipItem.yLabel + ' snt/kWh',
-            title: (tooltipItem: ChartTooltipItem[]) => ''
+            title: () => ''
           }
         }
       }
@@ -107,42 +110,35 @@ class Chart extends Component<{}, IChartState> {
     });
   }
 
-  async fetchPrices() {
-    this.setState({
-      chartVisible: false
-    });
+  componentDidUpdate() {
+    if (this.props.prices.length > 0 && this.state.pricesLoading) {
+      this.updateChartData(this.props.prices);
 
-    const endPoint = `http://${config.apiHost}:${config.apiPort}/prices`;
-    const response = await fetch(endPoint);
-    const prices = await response.json();
-
-    this.updateChartData(prices);
-
-    this.setState({
-      chartVisible: true
-    });
-  }
-
-  componentDidMount() {
-    this.fetchPrices();
+      this.setState({
+        pricesLoading: false
+      });
+    }
   }
 
   render() {
     return (
       <Segment>
-        <Grid>
-          <Grid.Column width={12}>
-            <Header as='h3' style={{ margin: '5px 0px 15px 5px' }}>Smart On/Off</Header>
+        <Header as='h3' style={{ margin: '5px 0px 15px 5px' }}>Smart On/Off</Header>
 
-            <Loader active={!this.state.chartVisible} size='huge' />
-            <div style={{ display: (this.state.chartVisible ? 'block' : 'none') }}>
-              <Line data={this.state.data} options={this.state.options} />
-            </div>
-          </Grid.Column>
-          <Grid.Column width={4} stretched>
-            <InfoBox />
-          </Grid.Column>
-        </Grid>
+        {
+          this.state.pricesLoading ? (
+            <Loader active={this.state.pricesLoading} size='huge' />
+          ) : (
+            <Grid>
+              <Grid.Column width={12}>
+                <Line data={this.state.data} options={this.state.options} />
+              </Grid.Column>
+              <Grid.Column width={4} stretched>
+                <InfoBox prices={this.props.prices} />
+              </Grid.Column>
+            </Grid>
+          )
+        }
       </Segment>
     );
   }
