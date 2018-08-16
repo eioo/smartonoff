@@ -3,10 +3,11 @@ import { Container, Grid } from 'semantic-ui-react';
 
 import Chart from './Chart';
 import Settings from './Settings';
-import { fetchPrices } from '../../lib/apiHelper';
+import { fetchPrices, fetchSettings } from '../../lib/apiHelper';
 
 interface IAppState {
-  prices: Array<number>
+  prices: Array<number>;
+  settings: ISettings;
 }
 
 class App extends Component<{}, IAppState> {
@@ -14,13 +15,16 @@ class App extends Component<{}, IAppState> {
     super(props);
 
     this.state = {
-      prices: []
+      prices: [],
+      settings: {}
     };
   }
 
   async componentDidMount() {
     const prices = await fetchPrices();
-    this.setState({ prices });
+    const settings = await fetchSettings();
+
+    this.setState({ prices, settings });
   }
 
   render() {
@@ -34,7 +38,7 @@ class App extends Component<{}, IAppState> {
           </Grid.Row>
           <Grid.Row>
             <Grid.Column width={16}>
-              <Settings />
+              <Settings settings={this.state.settings} />
             </Grid.Column>
           </Grid.Row>
         </Grid>

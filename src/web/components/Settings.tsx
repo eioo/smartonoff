@@ -1,13 +1,19 @@
 import React, { Component } from 'react';
-import { Segment, Button, Label, ButtonProps, Tab, Grid, Transition } from 'semantic-ui-react';
+import { Segment, Button, Label, ButtonProps, Tab, Grid } from 'semantic-ui-react';
+
 import SelectedRelay from './SelectedRelay';
 import ByPrice from './settings/ByPrice';
 import ByCheapest from './settings/ByCheapest';
 import ByTemperature from './settings/ByTemperature';
 
+interface ISettingsProps {
+  settings: ISettings;
+}
+
 interface ISettingsState {
   activeRelay: number | undefined;
   testingRelay: boolean;
+  settings: ISettings;
 }
 
 const tabs = [
@@ -25,18 +31,20 @@ const tabs = [
   }
 ];
 
-class Settings extends Component<{}, ISettingsState> {
-  constructor(props: {}) {
+class Settings extends Component<ISettingsProps, ISettingsState> {
+  constructor(props: ISettingsProps) {
     super(props);
     
     this.state = {
       activeRelay: undefined,
       testingRelay: false,
+      settings: {}
     }
   }
 
   handleSelectRelay = (e: React.MouseEvent, data: ButtonProps) => {
     e.preventDefault();
+
     this.setState({
       activeRelay: data.id
     });
@@ -71,22 +79,29 @@ class Settings extends Component<{}, ISettingsState> {
   }
 
   createTabs() {
-    const panes = tabs.map(tab => {
+    const panes = tabs.map((tab, index) => {
       return {
         menuItem: tab.name,
-        render: () => {
-          return (
-            <Tab.Pane>
-              <tab.component activeRelay={this.state.activeRelay} />
-            </Tab.Pane>
-          )
+        pane: {
+          key: `tab${index}`,
+          content: <tab.component activeRelay={this.state.activeRelay} />
         }
       }
     });
 
-    return <Tab panes={panes} style={{ marginTop: '10px' }} />
+    return <Tab panes={panes} style={{ marginTop: '10px' }} renderActiveOnly={false} />
   }
   
+  loadSettings() {
+    if (Object.keys(this.state.settings).length) return;
+    const settings = this.props.settings;
+    this.setState({ settings });
+  }
+
+  componentDidUpdate() {
+    this.loadSettings();
+  }
+
   render() {
     return (
       <Segment>

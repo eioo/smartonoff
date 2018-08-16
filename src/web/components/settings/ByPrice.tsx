@@ -1,8 +1,9 @@
 import React, { Component } from 'react';
-import { Form, Input } from 'semantic-ui-react';
+import { Form, Input, Label } from 'semantic-ui-react';
 
 interface IByPriceProps {
   activeRelay: number | undefined;
+  settings: ISettings;
 }
 
 interface IByPriceState {
@@ -25,7 +26,7 @@ class ByPrice extends Component<IByPriceProps, IByPriceState> {
   }
 
   componentDidMount() {
-    // Get featureActive
+    // TO-DO: Get featureActive
   }
 
   render() {
@@ -44,6 +45,7 @@ class ByPrice extends Component<IByPriceProps, IByPriceState> {
             toggle
             onChange={this.handleToggle} />
         </Form.Group>
+          <Label>Kytkee releen päälle hinnan alittaessa asetetun arvon.</Label>
       </Form>
     );
   }

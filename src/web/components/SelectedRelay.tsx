@@ -20,7 +20,7 @@ class SelectedRelay extends Component<ISelectedRelayProps, {}> {
           ) : (
             <div>
               <p>Relettä ei ole valittu.</p>
-              <p>Ole hyvä ja valitse rele painamalla vasemmalta löytyviä painikkeita</p>
+              <p>Voit valita releen painamalla vasemmalta löytyviä painikkeita.</p>
             </div>
           )
         }
