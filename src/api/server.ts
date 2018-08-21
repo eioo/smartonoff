@@ -2,11 +2,18 @@ import axios from 'axios';
 import * as express from 'express';
 import * as cors from 'cors';
 import config from '../../config';
-import { readSettings } from './settingsHelper';
+import { readSettings, writeSettings } from '../lib/settingsHelper';
 
 const app = express();
+
 app.use(cors());
+app.use(express.json());
+
 routeHandler();
+
+app.listen(config.apiPort, () => {
+  console.log(`API listening @ http://${config.apiHost}:${config.apiPort}`)
+});
 
 async function fetchPrices() {
   const response = await axios.get('https://fortum.heydaypro.com/tarkka/graph.php');
@@ -33,9 +40,10 @@ function routeHandler() {
   app.get('/settings', (req, res) => {
     const settings = readSettings();
     res.send(JSON.stringify(settings));
-  })
+  });
+  
+  app.post('/settings/write', (req, res) => {
+    writeSettings(req.body);
+    res.send('ok');
+  });
 }
-
-app.listen(config.apiPort, () => {
-  console.log(`API listening @ http://${config.apiHost}:${config.apiPort}`)
-});

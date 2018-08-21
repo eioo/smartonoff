@@ -82,8 +82,8 @@ class Chart extends Component<IChartProps, IChartState> {
             tooltipOptions.displayColors = false;
           },
           callbacks: {
-            label: (tooltipItem: ChartTooltipItem) => tooltipItem.yLabel + ' snt/kWh',
-            title: () => ''
+            label: (tooltipItem: ChartTooltipItem) => `Hinta: ${tooltipItem.yLabel} c/kWh`,
+            title: (tooltipItem: ChartTooltipItem[]) => `Kello ${tooltipItem[0].xLabel}:00`
           }
         }
       }

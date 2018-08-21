@@ -18,6 +18,9 @@
     "noUnusedLocals": true,
     "allowSyntheticDefaultImports": true
   },
+  "files": [
+    "src/lib/types.ts"
+  ],
   "exclude": [
     "node_modules",
     "dist"

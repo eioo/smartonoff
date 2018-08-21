@@ -1,11 +1,8 @@
 import React, { Component } from 'react';
+import { ISettingProps, ISettingState } from '../../../lib/types';
 
-interface IByCheapestProps {
-  activeRelay: number | undefined;
-}
-
-class ByCheapest extends Component<IByCheapestProps, {}> {
-  constructor(props: IByCheapestProps) {
+class ByCheapest extends Component<ISettingProps, ISettingState> {
+  constructor(props: ISettingProps) {
     super(props);
   }
 

@@ -1,17 +1,10 @@
 import React, { Component } from 'react';
 import { Form, Input, Label } from 'semantic-ui-react';
+import { getSetting, setSetting } from '../../../lib/settingsHelper';
+import { ISettingProps, ISettingState } from '../../../lib/types';
 
-interface IByPriceProps {
-  activeRelay: number | undefined;
-  settings: ISettings;
-}
-
-interface IByPriceState {
-  featureActive: boolean;
-}
-
-class ByPrice extends Component<IByPriceProps, IByPriceState> {
-  constructor(props: IByPriceProps) {
+class ByPrice extends Component<ISettingProps, ISettingState> {
+  constructor(props: ISettingProps) {
     super(props);
 
     this.state = {
@@ -26,26 +19,36 @@ class ByPrice extends Component<IByPriceProps, IByPriceState> {
   }
 
   componentDidMount() {
-    // TO-DO: Get featureActive
+    this.setState({
+      value: getSetting(this, 'value') as number
+    });
   }
 
   render() {
+    console.log(getSetting(this, 'value'));
+    
     return (
       <Form >
         <Form.Group inline>
           <Form.Field>
             <Input
-              placeholder='0.00'
+              placeholder={0.00}
               label='c/kWh'
-              labelPosition='right' />
+              labelPosition='right'
+              value={ this.state.value }
+              onChange={ (e: React.FormEvent<HTMLInputElement>) => {
+                const newValue = (e.target as HTMLInputElement).value;
+                setSetting(this, 'value', newValue);
+              }} />
           </Form.Field>
 
           <Form.Checkbox
             label={this.state.featureActive ? 'Käytössä' : 'Pois käytöstä'}
+            checked={ !!getSetting(this, 'enabled') }
             toggle
             onChange={this.handleToggle} />
         </Form.Group>
-          <Label>Kytkee releen päälle hinnan alittaessa asetetun arvon.</Label>
+        <Label>Kytkee releen päälle hinnan alittaessa asetetun arvon.</Label>
       </Form>
     );
   }

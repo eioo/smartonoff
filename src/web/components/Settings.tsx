@@ -5,6 +5,8 @@ import SelectedRelay from './SelectedRelay';
 import ByPrice from './settings/ByPrice';
 import ByCheapest from './settings/ByCheapest';
 import ByTemperature from './settings/ByTemperature';
+import { ISettings } from '../../lib/types';
+import { writeSettings } from '../../lib/apiHelper';
 
 interface ISettingsProps {
   settings: ISettings;
@@ -42,6 +44,19 @@ class Settings extends Component<ISettingsProps, ISettingsState> {
     }
   }
 
+  changeSettings = (newSettings: ISettings) => {
+    this.setState({
+      settings: newSettings
+    });
+    
+    console.log(newSettings);
+  }
+  
+  handleSaveRelay = (e:  React.MouseEvent) => {
+    e.preventDefault();
+    writeSettings(this.state.settings);
+  }
+
   handleSelectRelay = (e: React.MouseEvent, data: ButtonProps) => {
     e.preventDefault();
 
@@ -49,7 +64,7 @@ class Settings extends Component<ISettingsProps, ISettingsState> {
       activeRelay: data.id
     });
   }
-
+  
   handleTestRelay = (e: React.MouseEvent) => {
     e.preventDefault();
 
@@ -84,7 +99,12 @@ class Settings extends Component<ISettingsProps, ISettingsState> {
         menuItem: tab.name,
         pane: {
           key: `tab${index}`,
-          content: <tab.component activeRelay={this.state.activeRelay} />
+          content:
+            <tab.component
+              name={tab.name}
+              changeSettings={this.changeSettings}
+              settings={this.state.settings}
+              activeRelay={this.state.activeRelay} />
         }
       }
     });
@@ -111,7 +131,8 @@ class Settings extends Component<ISettingsProps, ISettingsState> {
               color='green'
               disabled={!this.state.activeRelay}
               icon='save'
-              label='Tallenna' />
+              label='Tallenna'
+              onClick={this.handleSaveRelay} />
             
             <Button
               color='yellow'

@@ -4,6 +4,7 @@ import { Container, Grid } from 'semantic-ui-react';
 import Chart from './Chart';
 import Settings from './Settings';
 import { fetchPrices, fetchSettings } from '../../lib/apiHelper';
+import { ISettings } from '../../lib/types';
 
 interface IAppState {
   prices: Array<number>;

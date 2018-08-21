@@ -1,21 +1,18 @@
 import React, { Component } from 'react';
+import { ISettingProps, ISettingState } from '../../../lib/types';
 
-interface IByTemperatureProps {
-  activeRelay: number | undefined;
-}
-
-class ByTemperature extends Component<IByTemperatureProps, {}> {
-  constructor(props: IByTemperatureProps) {
+class ByCheapest extends Component<ISettingProps, ISettingState> {
+  constructor(props: ISettingProps) {
     super(props);
   }
 
   render() {
     return (
       <div>
-        WIP
+
       </div>
     );
   }
 }
 
-export default ByTemperature;
+export default ByCheapest;
