@@ -1,1 +1,6 @@
-{"a":1,"b":null}
+{
+  "1": {
+    "Hinnan mukaan": { "enabled": true, "price": "2121" },
+    "Lämpötila": { "city": "2rrr2r", "temperature": "2322" }
+  }
+}

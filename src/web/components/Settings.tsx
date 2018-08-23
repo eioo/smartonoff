@@ -1,12 +1,18 @@
 import React, { Component } from 'react';
-import { Segment, Button, Label, ButtonProps, Tab, Grid } from 'semantic-ui-react';
+import {
+  Segment,
+  Button,
+  Label,
+  ButtonProps,
+  Tab,
+  Grid,
+} from 'semantic-ui-react';
 
 import SelectedRelay from './SelectedRelay';
-import ByPrice from './settings/ByPrice';
-import ByCheapest from './settings/ByCheapest';
-import ByTemperature from './settings/ByTemperature';
+import SettingsForm from './SettingsForm';
+import tabs from '../tabs';
 import { ISettings } from '../../lib/types';
-import { writeSettings } from '../../lib/apiHelper';
+import { saveSettings } from '../../lib/apiHelper';
 
 interface ISettingsProps {
   settings: ISettings;
@@ -15,77 +21,53 @@ interface ISettingsProps {
 interface ISettingsState {
   activeRelay: number | undefined;
   testingRelay: boolean;
-  settings: ISettings;
 }
-
-const tabs = [
-  {
-    name: 'Hinnan mukaan',
-    component: ByPrice
-  },
-  {
-    name: 'Halvimmat',
-    component: ByCheapest
-  },
-  {
-    name: 'Lämpötila',
-    component: ByTemperature
-  }
-];
 
 class Settings extends Component<ISettingsProps, ISettingsState> {
   constructor(props: ISettingsProps) {
     super(props);
-    
+
     this.state = {
       activeRelay: undefined,
       testingRelay: false,
-      settings: {}
-    }
+    };
   }
 
-  changeSettings = (newSettings: ISettings) => {
-    this.setState({
-      settings: newSettings
-    });
-    
-    console.log(newSettings);
-  }
-  
-  handleSaveRelay = (e:  React.MouseEvent) => {
+  handleSaveRelay = (e: React.MouseEvent) => {
     e.preventDefault();
-    writeSettings(this.state.settings);
-  }
+    saveSettings(this.props.settings);
+  };
 
   handleSelectRelay = (e: React.MouseEvent, data: ButtonProps) => {
     e.preventDefault();
 
     this.setState({
-      activeRelay: data.id
+      activeRelay: data.id,
     });
-  }
-  
+  };
+
   handleTestRelay = (e: React.MouseEvent) => {
     e.preventDefault();
 
     this.setState({
-      testingRelay: true
+      testingRelay: true,
     });
-    
+
     setTimeout(() => {
       this.setState({
-        testingRelay: false
-      })
+        testingRelay: false,
+      });
     }, 3000);
-  }
+  };
 
   createRelayButtons() {
-    const buttons = [1,2,3].map(i => (
+    const buttons = [1, 2, 3].map(i => (
       <Button
         id={i}
         key={i}
         basic={this.state.activeRelay !== i}
-        onClick={this.handleSelectRelay}>
+        onClick={this.handleSelectRelay}
+      >
         Rele {i}
       </Button>
     ));
@@ -99,27 +81,27 @@ class Settings extends Component<ISettingsProps, ISettingsState> {
         menuItem: tab.name,
         pane: {
           key: `tab${index}`,
-          content:
-            <tab.component
+          content: (
+            <SettingsForm
+              id={index}
+              settings={this.props.settings}
+              activeRelay={this.state.activeRelay}
               name={tab.name}
-              changeSettings={this.changeSettings}
-              settings={this.state.settings}
-              activeRelay={this.state.activeRelay} />
-        }
-      }
+              helpText={tab.helpText}
+              controls={tab.controls}
+            />
+          ),
+        },
+      };
     });
 
-    return <Tab panes={panes} style={{ marginTop: '10px' }} renderActiveOnly={false} />
-  }
-  
-  loadSettings() {
-    if (Object.keys(this.state.settings).length) return;
-    const settings = this.props.settings;
-    this.setState({ settings });
-  }
-
-  componentDidUpdate() {
-    this.loadSettings();
+    return (
+      <Tab
+        panes={panes}
+        style={{ marginTop: '10px' }}
+        renderActiveOnly={false}
+      />
+    );
   }
 
   render() {
@@ -128,27 +110,29 @@ class Settings extends Component<ISettingsProps, ISettingsState> {
         <Grid>
           <Grid.Column width={12}>
             <Button
-              color='green'
+              color="green"
               disabled={!this.state.activeRelay}
-              icon='save'
-              label='Tallenna'
-              onClick={this.handleSaveRelay} />
-            
+              icon="save"
+              label="Tallenna"
+              onClick={this.handleSaveRelay}
+            />
+
             <Button
-              color='yellow'
+              color="yellow"
               disabled={!this.state.activeRelay}
-              icon='lightning'
-              label='Testaa'
+              icon="lightning"
+              label="Testaa"
               loading={this.state.testingRelay}
               onClick={this.handleTestRelay}
-              style={{ marginRight: '10px' }} />
-            
+              style={{ marginRight: '10px' }}
+            />
+
             {this.createRelayButtons()}
-            {
-              !this.state.activeRelay ?
-              <Label pointing='left' color='purple'>Valitse rele</Label> :
-              null
-            }
+            {!this.state.activeRelay ? (
+              <Label pointing="left" color="purple">
+                Valitse rele
+              </Label>
+            ) : null}
             {this.createTabs()}
           </Grid.Column>
 
