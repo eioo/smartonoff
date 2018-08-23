@@ -83,7 +83,6 @@ class Settings extends Component<ISettingsProps, ISettingsState> {
           key: `tab${index}`,
           content: (
             <SettingsForm
-              id={index}
               settings={this.props.settings}
               activeRelay={this.state.activeRelay}
               name={tab.name}

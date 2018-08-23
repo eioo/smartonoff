@@ -4,7 +4,6 @@ import { IFormControl, ISettings } from '../../lib/types';
 import _ from 'lodash';
 
 interface IFormProps {
-  id: number;
   name: string;
   helpText: string;
   controls: Array<IFormControl>;
@@ -14,7 +13,6 @@ interface IFormProps {
 
 interface IFormState {
   enabled: boolean;
-  value?: number;
 }
 
 class SettingsForm extends Component<IFormProps, IFormState> {
@@ -77,7 +75,6 @@ class SettingsForm extends Component<IFormProps, IFormState> {
               })
             ) : (
               <Input
-                id={this.props.id}
                 name={control.name}
                 onChange={this.handleChange}
                 {...control.inputProps}
