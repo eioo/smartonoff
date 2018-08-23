@@ -44,20 +44,6 @@ const tabs: Array<ISettingsForm> = [
           placeholder: '15.00',
         },
       },
-      {
-        name: 'lesserThanGreater',
-        label: '',
-        radioButtonProps: [
-          {
-            label: 'Alittaessa',
-            value: 'lesser',
-          },
-          {
-            label: 'Ylittäessä',
-            value: 'greater',
-          },
-        ],
-      },
     ],
   },
 ];

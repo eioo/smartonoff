@@ -69,17 +69,12 @@ class SettingsForm extends Component<IFormProps, IFormState> {
         <Form.Group key={index}>
           <Form.Field>
             {control.label ? <label>{control.label}</label> : null}
-            {control.radioButtonProps ? (
-              control.radioButtonProps.map((props, index) => {
-                return <Form.Radio key={index} {...props} />;
-              })
-            ) : (
-              <Input
-                name={control.name}
-                onChange={this.handleChange}
-                {...control.inputProps}
-              />
-            )}
+
+            <Input
+              name={control.name}
+              onChange={this.handleChange}
+              {...control.inputProps}
+            />
           </Form.Field>
         </Form.Group>
       );
