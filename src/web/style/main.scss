@@ -1,0 +1,32 @@
+body {
+  padding: 10px;
+}
+
+#infobox {
+  .message {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    right: 10px;
+  }
+}
+
+#relayinfo {
+  #header {
+    margin-top: -15px;
+  }
+
+  #selected {
+    display: none;
+  }
+}
+
+#chart,
+#settings {
+  width: 100%;
+}
+
+#infobox,
+#relayinfo {
+  width: 300px;
+}

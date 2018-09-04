@@ -1,0 +1,23 @@
+doctype html
+html(lang='en')
+  head
+    meta(charset='UTF-8')
+    meta(name='viewport', content='width=device-width, initial-scale=1.0')
+    meta(http-equiv='X-UA-Compatible', content='ie=edge')
+    title Smart On/Off
+    include favicon.pug
+    link(rel='stylesheet', href='style/semantic/semantic.min.css')
+    link(rel='stylesheet', href='style/main.scss')
+
+  body
+    .ui.container
+      .ui.segments
+        .ui.horizontal.segments
+          include templates/chart.pug
+          include templates/infobox.pug
+
+        .ui.horizontal.segments
+          include templates/settings.pug
+          include templates/relayinfo.pug
+  
+    script(src='app.ts?' + Math.floor(Math.random() * 1000000))
