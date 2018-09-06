@@ -15,16 +15,16 @@ function switchTab(id: string): void {
   const targetItem = document.querySelector(`.menu .item[data-tab="${id}"]`);
   const targetPane = document.querySelector(`.tab[data-tab="${id}"]`);
 
-  if (targetItem!.classList.contains('disabled')) return;
+  if (!targetItem || !targetPane || targetItem.classList.contains('disabled')) {
+    return;
+  }
 
-  Array.from(document.querySelectorAll('.menu .item.active')).map(item =>
-    item.classList.remove('active')
+  const activeElements = Array.from(
+    document.querySelectorAll('.menu .item.active, .tab.active')
   );
 
-  Array.from(document.querySelectorAll('.tab.active')).map(item =>
-    item.classList.remove('active')
-  );
+  activeElements.map(item => item.classList.remove('active'));
 
-  targetItem!.classList.add('active');
-  targetPane!.classList.add('active');
+  targetItem.classList.add('active');
+  targetPane.classList.add('active');
 }

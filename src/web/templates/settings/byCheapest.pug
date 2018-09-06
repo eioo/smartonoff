@@ -1,0 +1,17 @@
+.ui.form
+  .field
+    .ui.right.labeled.input
+      select(id='cheapest' disabled)
+        option(value='' disabled selected) Valitse vaihtoehto
+        option(value='0') Pois päältä
+        option(value='1') Vain halvin tunti
+
+        each _, i in Array(23)
+          option(value=i + 2)
+            =(i + 2) + ' halvinta tuntia'
+        
+        
+        option(value='24') Kaikki tunnit
+
+  .ui.label
+    | Kytkee releen päälle vain halvimpina tunteina.

@@ -1,9 +1,9 @@
 #settings.ui.segment
-  #save-relay-btn.ui.green.labeled.icon.button
+  #save-relay-btn.ui.green.labeled.icon.disabled.button
     i.save.icon
     | Tallenna
 
-  #test-relay-btn.ui.yellow.labeled.icon.button
+  #test-relay-btn.ui.yellow.labeled.icon.disabled.button
     i.lightning.icon
     | Testaa
       
@@ -15,10 +15,10 @@
     a.item.active(data-tab=1) Hinnan mukaan
     a.item(data-tab=2) Vain halvimmat
     a.disabled.item(data-tab=3) Lämpötila
-    
-  .ui.bottom.attached.tab.segment.active(data-tab=1)
+  
+  .ui.bottom.attached.tab.segment.active(data-tab=1, data-name='byPrice')
     include settings/byPrice.pug
-  .ui.bottom.attached.tab.segment(data-tab=2)
-    | jebin2
-  .ui.bottom.attached.tab.segment(data-tab=3)
+  .ui.bottom.attached.tab.segment(data-tab=2, data-name='byCheapest')
+    include settings/byCheapest.pug
+  .ui.bottom.attached.tab.segment(data-tab=3, data-name='byTemperature')
     | WIP

@@ -16,11 +16,9 @@ class PriceChart {
     ) as HTMLCanvasElement;
 
     this.chart = new Chart(canvas, chartConfig);
-    await this.loadPrices();
-    this.setLimit(8);
   }
 
-  setChartData(data: Array<number>): void {
+  setData(data: Array<number>): void {
     const { chart } = this;
     const { config } = chart;
 
@@ -53,13 +51,6 @@ class PriceChart {
     chartConfig.data!.datasets![0].pointBorderColor = pointColors;
     chartConfig.data!.datasets![0].pointHoverBackgroundColor = pointColors;
     this.chart.update();
-  }
-
-  async loadPrices(): Promise<void> {
-    const res = await fetch('http://localhost:9999/prices');
-    const data = await res.json();
-
-    this.setChartData(data);
   }
 }
 

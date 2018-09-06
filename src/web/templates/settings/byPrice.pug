@@ -1,4 +1,7 @@
-#byprice.ui.form
-  .ui.right.labeled.input
-    input(type='text' placeholder='0.00' id='price')
-    label.ui.label(for='price') c/kWh
+.ui.form
+  .field
+    .ui.right.labeled.input
+      input(type='number' step='0.01' placeholder='0,00' id='price' disabled)
+      label.ui.label(for='price') c/kWh
+  .ui.label
+    | Kytkee releen päälle hinnan alittaessa asetetun arvon.
