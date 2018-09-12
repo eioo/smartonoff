@@ -1,6 +1,6 @@
 export interface ISaveData {
   relayID: number;
-  settingName: string;
+  settingID: string;
   values: {
     [key: string]: number | string;
   };
@@ -8,7 +8,7 @@ export interface ISaveData {
 
 export interface ISettings {
   [relayID: string]: {
-    [settingName: string]: {
+    [settingID: string]: {
       [value: string]: number | string;
     };
   };

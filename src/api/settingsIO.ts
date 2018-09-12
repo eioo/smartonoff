@@ -2,7 +2,6 @@ import * as fs from 'fs';
 import * as util from 'util';
 import * as path from 'path';
 import { ISaveData, ISettings } from '../lib/types';
-import { mergeDeep } from '../lib/mergeDeep';
 
 const SETTINGS_FILE = path.join(__dirname, 'settings.json');
 
@@ -22,16 +21,29 @@ export async function saveSetting(data: ISaveData): Promise<void> {
     return {};
   })();
 
-  console.log(settings);
+  const valuesExist = Object.values(data.values).filter(x => x).length > 0;
 
-  const newSetting = {};
-  newSetting[data.relayID] = {};
-  newSetting[data.relayID][data.settingName] = data.values;
+  const json = (() => {
+    if (!valuesExist) {
+      delete settings[data.relayID];
+      return settings;
+    }
 
-  const merged = mergeDeep(settings, newSetting);
-  const json = JSON.stringify(merged);
+    const newSetting = {
+      [data.relayID]: {
+        [data.settingID]: data.values,
+      },
+    };
 
-  await writeFile(SETTINGS_FILE, json);
+    const merged = {
+      ...settings,
+      ...newSetting,
+    };
+
+    return merged;
+  })();
+
+  await writeFile(SETTINGS_FILE, JSON.stringify(json));
 }
 
 export async function getSettings(): Promise<ISettings> {
