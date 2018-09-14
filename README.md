@@ -1,6 +1,7 @@
 # Smart On/Off
 
 Can turn relays on / off based on current electricity prices. Works with Raspberry Pi!
+
 Currently only [Fortum.fi](http://fortum.fi/) electricity prices are supported.
 
 ## Requirements
@@ -50,12 +51,15 @@ yarn build
 ### Running the application
 
 To build and run:
+
 `npm start` OR `yarn start`
 
 If you only want to run the app, do:
+
 `npm run server` OR `yarn server`
 
 To start development environment, run:
+
 `npm run dev` or `yarn dev`
 
 ### Start on boot
