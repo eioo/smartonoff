@@ -66,4 +66,4 @@ Development environment:
 
 To autostart the script on boot, add following command to `~/.config/lxsession/LXDE-pi/autostart`
 
-`@lxterminal -e "/PATH/TO/smartonoff/start.sh"`
+`@lxterminal -e "/PATH/TO/smartonoff/scripts/start.sh"`
