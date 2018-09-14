@@ -31,21 +31,32 @@ hdmi_drive=1
 
 I use addon called [Virtual Keyboard](https://chrome.google.com/webstore/detail/virtual-keyboard/pflmllfnnabikmfkkaddkoolinlfninn) to enable touch keyboard on chrome. Recommended zoom level is 120%
 
-### Running
+### Building
 
 If you use `npm`, run these commands:
 
 ```
 npm install
-npm start
+npm run build
 ```
 
 If you use `yarn`, run these commands:
 
 ```
 yarn install
-yarn start
+yarn build
 ```
+
+### Running the application
+
+To build and run:
+`npm start` OR `yarn start`
+
+If you only want to run the app, do:
+`npm run server` OR `yarn server`
+
+To start development environment, run:
+`npm run dev` or `yarn dev`
 
 ### Start on boot
 
