@@ -1,17 +1,17 @@
-import { getSessionSettings, getSessionPrices } from './sessionStorage';
+import { getSessionSettings } from './sessionStorage';
+import {
+  getActiveHoursByCheapest,
+  getActiveHoursByPrice,
+} from '../../lib/activeHours';
 
 const relayinfo = document.querySelector('#relayinfo') as HTMLDivElement;
-
 const noneSelected = relayinfo.querySelector('#none') as HTMLDivElement;
 const relaySelected = relayinfo.querySelector('#selected') as HTMLDivElement;
-
 const idElement = relayinfo.querySelector('#relayID') as HTMLDivElement;
 const condition = relayinfo.querySelector('#condition') as HTMLDivElement;
 const activeHoursElement = relayinfo.querySelector(
   '#activehours'
 ) as HTMLDivElement;
-
-const activeHours = [1, 2, 3];
 
 export function hideRelayInfo(): void {
   noneSelected.style.display = 'block';
@@ -61,28 +61,4 @@ export function showRelayInfo(relayID: number): void {
 
   condition.innerHTML = tabHeader.innerHTML;
   activeHoursElement.innerHTML = bubbles || '-';
-}
-
-function getActiveHoursByPrice(priceLimit: number): Array<number> {
-  const prices = getSessionPrices();
-
-  const activeHours = prices
-    .map((price, hour) => {
-      return price <= priceLimit ? hour : undefined;
-    })
-    .filter(price => price);
-
-  return activeHours as Array<number>;
-}
-
-function getActiveHoursByCheapest(cheapestHours: number): Array<number> {
-  const prices = getSessionPrices();
-
-  const activeHours = prices
-    .map((price, i) => [i, price])
-    .sort((a, b) => a[1] - b[1])
-    .map(arr => arr[0])
-    .slice(0, cheapestHours);
-
-  return activeHours;
 }

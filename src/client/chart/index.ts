@@ -2,6 +2,10 @@ import { Chart } from 'chart.js';
 import chartConfig from './config';
 import horizontalLinePlugin from './horizontalLinePlugin';
 import { arrayAverage, arrayMedian } from '../../lib/math';
+import App from '../app';
+
+const ACTIVE_COLOR = 'red';
+const PASSIVE_COLOR = 'rgba(75,192,192,1)';
 
 const $ = document.querySelector.bind(document);
 
@@ -13,7 +17,7 @@ const median = $('#infobox #median') as HTMLDivElement;
 class PriceChart {
   chart: Chart;
 
-  constructor() {
+  constructor(public app: App) {
     Chart.plugins.register(horizontalLinePlugin);
     this.create();
   }
@@ -42,7 +46,7 @@ class PriceChart {
     chart.update();
   }
 
-  getChartData(): Array<number> {
+  private getChartData(): Array<number> {
     const { chart } = this;
     return ((chart.data &&
       chart.data.datasets &&
@@ -50,17 +54,39 @@ class PriceChart {
       []) as Array<number>;
   }
 
+  private setPointColors(colors: Array<string>): void {
+    chartConfig.data!.datasets![0].pointBorderColor = colors;
+    chartConfig.data!.datasets![0].pointHoverBackgroundColor = colors;
+    this.chart.update();
+  }
+
   setLimit(limit: number): void {
     const data = this.getChartData();
-    chartConfig.lineAtY = [8];
-
     const pointColors = data.map(point => {
-      return point >= limit ? 'red' : 'rgba(75,192,192,1)';
+      return point <= limit ? ACTIVE_COLOR : PASSIVE_COLOR;
     });
 
-    chartConfig.data!.datasets![0].pointBorderColor = pointColors;
-    chartConfig.data!.datasets![0].pointHoverBackgroundColor = pointColors;
-    this.chart.update();
+    chartConfig.lineAtY = [limit];
+    this.setPointColors(pointColors);
+  }
+
+  removeLimit(): void {
+    const data = this.getChartData();
+    const pointColors = new Array(data.length).fill(PASSIVE_COLOR);
+
+    chartConfig.lineAtY = [];
+    this.setPointColors(pointColors);
+  }
+
+  setActivePoints(indexes: Array<number>): void {
+    const data = this.getChartData();
+
+    const pointColors = data.map((point, index) => {
+      return indexes.includes(index) ? ACTIVE_COLOR : PASSIVE_COLOR;
+    });
+
+    this.removeLimit();
+    this.setPointColors(pointColors);
   }
 }
 

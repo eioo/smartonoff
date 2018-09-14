@@ -7,7 +7,7 @@
   "license": "MIT",
   "scripts": {
     "server": "nodemon",
-    "parcel": "parcel src/web/index.pug",
+    "parcel": "parcel src/client/index.pug",
     "dev": "npm-run-all -p server parcel"
   },
   "devDependencies": {

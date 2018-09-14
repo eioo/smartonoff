@@ -1,4 +1,4 @@
 .cache
 dist
 node_modules
-src/api/settings.json
+src/server/settings.json

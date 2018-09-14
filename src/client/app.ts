@@ -1,16 +1,17 @@
 import PriceChart from './chart';
-import * as settings from './settings';
+import Settings from './settings';
 import { ISettings } from '../lib/types';
 
 const loader = document.querySelector('#chart #loading') as HTMLDivElement;
 
 class App {
   chart: PriceChart;
+  settings: Settings;
 
   constructor() {
-    settings.eventHandler();
+    this.chart = new PriceChart(this);
+    this.settings = new Settings(this);
 
-    this.chart = new PriceChart();
     this.fetchPrices();
     this.fetchSettings();
   }
@@ -37,3 +38,4 @@ class App {
 }
 
 new App();
+export default App;
