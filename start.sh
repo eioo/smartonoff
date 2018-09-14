@@ -3,5 +3,5 @@ pause() {
   read -n1 -rsp $'Press any key to close terminal...\n'
 }
 
-npm start
+npm run server
 pause
