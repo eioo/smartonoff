@@ -6,6 +6,10 @@ export interface ISaveData {
   };
 }
 
+export interface ITestData {
+  relayID: number;
+}
+
 export interface ISettings {
   [relayID: string]: {
     [settingID: string]: {

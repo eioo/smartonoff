@@ -1,9 +1,10 @@
 import { tabHandler } from './tabHandler';
 import { hideRelayInfo, showRelayInfo } from './relayInfoHandler';
-import { ISaveData } from '../../lib/types';
+import { ISaveData, ITestData } from '../../lib/types';
 import { getSessionSettings, setSessionSetting } from './sessionStorage';
 import App from '../app';
 import { getActiveHoursByCheapest } from '../../lib/activeHours';
+import config from 'config';
 
 const $ = document.querySelector.bind(document);
 const $all = document.querySelectorAll.bind(document);
@@ -68,12 +69,24 @@ class Settings {
     this.updateChart(relayID as number);
   };
 
-  private testRelay(): void {
+  private async testRelay(): Promise<void> {
+    const relayID = getSelectedRelayID();
+    const data = { relayID } as ITestData;
+
     testButton.classList.add('loading');
+
+    await fetch('http://localhost:9999/test', {
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data),
+    });
 
     setTimeout(() => {
       testButton.classList.remove('loading');
-    }, 2000);
+    }, config.testDuration);
   }
 
   private relayInfoHandler(): void {

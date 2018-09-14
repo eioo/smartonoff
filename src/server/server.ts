@@ -1,11 +1,13 @@
-import * as express from 'express';
 import * as cors from 'cors';
+import * as express from 'express';
 import * as path from 'path';
+import * as relayController from './relayController';
 import { routes } from './routes';
 import logger from './logger';
+import { waitForConnection } from './connectionCheck';
 
-process.on('unhandledRejection', error => {
-  logger.fatal('unhandledRejection: ', error.message);
+process.on('unhandledRejection', err => {
+  logger.fatal(`unhandledRejection: ${err.message}`);
 });
 
 const HOST = 'localhost';
@@ -21,7 +23,14 @@ app.use(express.json());
 app.use(express.static(DIST_FOLDER));
 
 routes(app);
+listen();
 
-app.listen(PORT, () => {
-  logger.success(`Server running on: http://${HOST}:${PORT}`);
-});
+function listen(): void {
+  waitForConnection(() => {
+    relayController.initialize();
+
+    app.listen(PORT, () => {
+      logger.success(`Server running on: http://${HOST}:${PORT}`);
+    });
+  });
+}

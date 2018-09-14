@@ -2,6 +2,7 @@ import * as fs from 'fs';
 import * as util from 'util';
 import * as path from 'path';
 import { ISaveData, ISettings } from '../lib/types';
+import { updateRelayStates } from './relayController';
 
 const SETTINGS_FILE = path.join(__dirname, 'settings.json');
 
@@ -44,6 +45,7 @@ export async function saveSetting(data: ISaveData): Promise<void> {
   })();
 
   await writeFile(SETTINGS_FILE, JSON.stringify(json));
+  updateRelayStates();
 }
 
 export async function getSettings(): Promise<ISettings> {
