@@ -1,8 +1,10 @@
 import fetch from 'node-fetch';
+import logger from './logger';
 
 const PRICES_URL = 'https://fortum.heydaypro.com/tarkka/graph.php';
 
 export async function fetchPrices(): Promise<number[]> {
+  logger.info('Fetching prices');
   const prices = [];
 
   const data = await (async () => {
@@ -10,12 +12,12 @@ export async function fetchPrices(): Promise<number[]> {
       const resp = await fetch(PRICES_URL);
       return await resp.text();
     } catch (e) {
-      console.log('API: Error! Could not fetch prices.');
       return '';
     }
   })();
 
   if (!data) {
+    logger.error('Could not fetch prices');
     return [];
   }
 
@@ -28,5 +30,6 @@ export async function fetchPrices(): Promise<number[]> {
     prices.push(parseFloat(match[1]));
   }
 
+  logger.success(`Prices fetched`);
   return prices;
 }
