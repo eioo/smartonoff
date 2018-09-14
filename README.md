@@ -50,15 +50,15 @@ yarn build
 
 ### Running the application
 
-To build and run:
-
-`npm start` OR `yarn start`
-
-If you only want to run the app, do:
+Running:
 
 `npm run server` OR `yarn server`
 
-To start development environment, run:
+Build and run:
+
+`npm start` OR `yarn start`
+
+Development environment:
 
 `npm run dev` or `yarn dev`
 
