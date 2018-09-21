@@ -6,10 +6,10 @@
   "author": "Kallu609 <khirvola@gmail.com>",
   "license": "MIT",
   "scripts": {
-    "nodemon": "nodemon",
-    "parcel": "parcel src/client/index.pug",
     "build": "parcel build src/client/index.pug",
     "server": "tsc && node build/server.js",
+    "serverdev": "nodemon",
+    "clientdev": "parcel src/client/index.pug",
     "dev": "npm-run-all -p nodemon parcel",
     "start": "npm-run-all -s build server"
   },
