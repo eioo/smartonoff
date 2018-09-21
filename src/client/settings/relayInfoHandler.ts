@@ -1,4 +1,4 @@
-import { getSessionSettings } from './sessionStorage';
+import { getSessionSettings, getSessionPrices } from './sessionStorage';
 import {
   getActiveHoursByCheapest,
   getActiveHoursByPrice,
@@ -19,6 +19,7 @@ export function hideRelayInfo(): void {
 }
 
 export function showRelayInfo(relayID: number): void {
+  const prices = getSessionPrices();
   const settings = getSessionSettings();
   const relaySettings = settings[relayID];
 
@@ -44,12 +45,12 @@ export function showRelayInfo(relayID: number): void {
 
     if (settingID === 1) {
       const priceLimit = parseFloat(values.price.toString());
-      return getActiveHoursByPrice(priceLimit);
+      return getActiveHoursByPrice(priceLimit, prices);
     }
 
     if (settingID === 2) {
       const cheapestHours = parseInt(values.cheapest.toString());
-      return getActiveHoursByCheapest(cheapestHours);
+      return getActiveHoursByCheapest(cheapestHours, prices);
     }
 
     return [];

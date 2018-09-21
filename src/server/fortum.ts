@@ -1,10 +1,9 @@
 import fetch from 'node-fetch';
-import logger from './logger';
+import logger, { iLogger } from './logger';
 
 const PRICES_URL = 'https://fortum.heydaypro.com/tarkka/graph.php';
 
 export async function fetchPrices(): Promise<number[]> {
-  logger.info('Fetching prices');
   const prices = [];
 
   const data = await (async () => {
@@ -30,6 +29,6 @@ export async function fetchPrices(): Promise<number[]> {
     prices.push(parseFloat(match[1]));
   }
 
-  logger.success(`Prices fetched`);
+  iLogger.success(`Prices fetched`);
   return prices;
 }

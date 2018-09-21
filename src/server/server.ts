@@ -6,10 +6,7 @@ import { routes } from './routes';
 import logger from './logger';
 import { waitForConnection } from './connectionCheck';
 import config from '../../config';
-
-process.on('unhandledRejection', err => {
-  logger.fatal(`unhandledRejection: ${err.message}`);
-});
+import { openBrowser } from './processController';
 
 const DIST_FOLDER = path.join(__dirname, '../../dist');
 
@@ -30,6 +27,7 @@ function listen(): void {
 
     app.listen(config.port, () => {
       logger.success(`Server running on: http://${config.host}:${config.port}`);
+      openBrowser();
     });
   });
 }

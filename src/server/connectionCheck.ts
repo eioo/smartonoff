@@ -1,15 +1,20 @@
 import * as dns from 'dns';
 import logger from './logger';
 import config from '../../config';
+import {
+  closeOnScreenKeyboard,
+  openOnScreenKeyboard,
+} from './processController';
 
-let showError = true;
+let firstTry = true;
 
 export function waitForConnection(callback: Function): void {
   dns.lookup(config.dnsLookupHost, err => {
     if (err) {
-      if (showError) {
+      if (firstTry) {
         logger.error('No internet connection. Waiting until connected');
-        showError = false;
+        firstTry = false;
+        openOnScreenKeyboard();
       }
 
       setTimeout(() => {
@@ -19,6 +24,7 @@ export function waitForConnection(callback: Function): void {
       return;
     }
 
+    !firstTry && closeOnScreenKeyboard();
     callback();
   });
 }

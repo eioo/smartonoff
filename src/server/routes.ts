@@ -3,9 +3,12 @@ import { fetchPrices } from './fortum';
 import { ISaveData, ITestData } from '../lib/types';
 import { saveSetting, getSettings } from './settingsIO';
 import { testRelay } from './relayController';
+import { iLogger } from './logger';
 
 export function routes(app: express.Application) {
   app.get('/prices', async (req, res) => {
+    iLogger.info('Fetching prices');
+
     const prices = await fetchPrices();
     res.send(JSON.stringify(prices));
   });

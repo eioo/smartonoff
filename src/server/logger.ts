@@ -1,13 +1,17 @@
-import { Signale, SignaleOptions } from 'signale';
+import { Signale, SignaleOptions, DefaultMethods } from 'signale';
 
 const options = {
   config: {
-    // displayFilename: true,
     displayTimestamp: true,
     displayDate: false,
   },
 } as SignaleOptions;
 
 const logger = new Signale(options);
+
+export const iLogger = new Signale({
+  interactive: true,
+  ...options,
+});
 
 export default logger;

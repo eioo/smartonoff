@@ -1,5 +1,5 @@
 import * as schedule from 'node-schedule';
-import logger from './logger';
+import logger, { iLogger } from './logger';
 import { fetchPrices } from './fortum';
 import {
   getActiveHoursByCheapest,
@@ -27,22 +27,28 @@ export async function initialize(): Promise<void> {
   fetchPriceRule.hour = 0; // TODO: not 100% sure when the prices update on heydaypro.com
   relayStateRule.minute = 0;
 
-  schedule.scheduleJob(fetchPriceRule, updatePrices);
-  schedule.scheduleJob(relayStateRule, updateRelayStates);
+  schedule.scheduleJob(fetchPriceRule, async () => {
+    logger.info('Schedule: Updating prices');
+    await updatePrices();
+  });
 
-  prices = await fetchPrices();
+  schedule.scheduleJob(relayStateRule, async () => {
+    logger.info('Schedule: Updating relay states');
+    await updateRelayStates();
+  });
 
-  updateRelayStates();
+  iLogger.info('Fetching prices for first time');
+  await updatePrices();
+
+  logger.info('Initializing relay states');
+  await updateRelayStates();
 }
 
 async function updatePrices(): Promise<void> {
-  logger.info('Updating prices');
   prices = await fetchPrices();
 }
 
 export async function updateRelayStates(): Promise<void> {
-  logger.info('Updating relay states');
-
   const settings = await getSettings();
   const currentHour = new Date().getHours();
 
@@ -68,6 +74,8 @@ export async function updateRelayStates(): Promise<void> {
 
     const newRelayState = activeHours.includes(currentHour);
     setRelayState(parseInt(relayID), newRelayState);
+
+    logger.info(`Relay ${relayID}: ${newRelayState ? 'ON' : 'OFF'}`);
   }
 }
 
@@ -85,15 +93,17 @@ function setRelayState(relayID: number, state: boolean): void {
   }
 
   startState !== state && relay.writeSync(+state);
-  logger.info(`Relay ${relayID}: ${state ? 'ON' : 'OFF'}`);
 }
 
 export function testRelay(relayID: number): void {
   const state = getRelayState(relayID);
+  const logText = `relay ${relayID} for ${config.testDuration}ms`;
 
+  logger.info(`Testing ${logText}`);
   setRelayState(relayID, !state);
 
   setTimeout(() => {
     setRelayState(relayID, state);
+    logger.success(`Tested ${logText}`);
   }, config.testDuration);
 }
