@@ -1,16 +1,16 @@
-interface IExtendedChart extends Chart {
+interface IChartExt extends Chart {
   scales: Chart.ChartScales;
   chart: Chart;
   width: number;
 }
 
-export interface IExtendedChartConfig extends Chart.ChartConfiguration {
+export interface IChartConfigExt extends Chart.ChartConfiguration {
   lineAtY?: Array<number>;
 }
 
 const horizontalLinePlugin = {
   renderHorizontalLine: function(
-    chartInstance: IExtendedChart,
+    chartInstance: IChartExt,
     yPoint: number
   ): void {
     const xAxis = chartInstance.scales['x-axis-0'];
@@ -31,8 +31,8 @@ const horizontalLinePlugin = {
     ctx.stroke(); */
   },
 
-  afterDatasetsDraw: function(chart: IExtendedChart, easing: string): void {
-    const config = chart.config as IExtendedChartConfig;
+  afterDatasetsDraw: function(chart: IChartExt, easing: string): void {
+    const config = chart.config as IChartConfigExt;
 
     if (config.lineAtY) {
       config.lineAtY.forEach(yPoint =>

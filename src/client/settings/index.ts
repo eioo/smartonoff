@@ -1,10 +1,11 @@
+import App, { BASE_URL } from '../app';
+import config from '../../../config';
+
 import { tabHandler } from './tabHandler';
 import { hideRelayInfo, showRelayInfo } from './relayInfoHandler';
 import { ISaveData, ITestData } from '../../lib/types';
 import { getSessionSettings, setSessionSetting } from './sessionStorage';
-import App from '../app';
 import { getActiveHoursByCheapest } from '../../lib/activeHours';
-import config from 'config';
 
 const $ = document.querySelector.bind(document);
 const $all = document.querySelectorAll.bind(document);
@@ -54,7 +55,7 @@ class Settings {
 
     const data = { relayID, settingID, values } as ISaveData;
 
-    fetch('http://localhost:9999/save', {
+    fetch(BASE_URL + '/save', {
       method: 'POST',
       headers: {
         Accept: 'application/json',
@@ -75,7 +76,7 @@ class Settings {
 
     testButton.classList.add('loading');
 
-    await fetch('http://localhost:9999/test', {
+    await fetch(BASE_URL + '/test', {
       method: 'POST',
       headers: {
         Accept: 'application/json',

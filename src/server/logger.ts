@@ -2,7 +2,7 @@ import { Signale, SignaleOptions } from 'signale';
 
 const options = {
   config: {
-    displayFilename: true,
+    // displayFilename: true,
     displayTimestamp: true,
     displayDate: false,
   },

@@ -55,6 +55,9 @@ class PriceChart {
   }
 
   private setPointColors(colors: Array<string>): void {
+    chartConfig.data!.datasets![0].borderColor = colors;
+    chartConfig.data!.datasets![0].backgroundColor = colors;
+    chartConfig.data!.datasets![0].pointBackgroundColor = colors;
     chartConfig.data!.datasets![0].pointBorderColor = colors;
     chartConfig.data!.datasets![0].pointHoverBackgroundColor = colors;
     this.chart.update();

@@ -1,6 +1,6 @@
 import * as dns from 'dns';
 import logger from './logger';
-import config from 'config';
+import config from '../../config';
 
 let showError = true;
 

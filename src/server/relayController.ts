@@ -6,18 +6,19 @@ import {
   getActiveHoursByPrice,
 } from '../lib/activeHours';
 import { getSettings } from './settingsIO';
-import config from 'config';
+import config from '../../config';
+import { Gpio } from 'onoff';
 
-const relays = {
-  /*   1: new Gpio(12, 'out'),
-  2: new Gpio(11, 'out'),
-  3: new Gpio(10, 'out'), */
-  1: '',
-  2: '',
-  3: '',
-};
+interface IRelays {
+  [id: number]: Gpio;
+}
 
+const relays: IRelays = {};
 let prices: Array<number>;
+
+config.relayGPIO.map((gpio, i) => {
+  relays[i + 1] = new Gpio(gpio, 'out');
+});
 
 export async function initialize(): Promise<void> {
   const fetchPriceRule = new schedule.RecurrenceRule();
@@ -70,17 +71,29 @@ export async function updateRelayStates(): Promise<void> {
   }
 }
 
-function setRelayState(relayID: number, state: boolean): void {
-  logger.info(`Relay ${relayID}: ${state ? 'ON' : 'OFF'}`);
+function getRelayState(relayID: number): boolean {
+  const relay = relays[relayID];
+  return !!relay.readSync();
+}
 
-  // const relay = relays[relayID];
-  // relay.writeSync(state | 0);
+function setRelayState(relayID: number, state: boolean): void {
+  const startState = getRelayState(relayID);
+  const relay = relays[relayID];
+
+  if (startState === state) {
+    return;
+  }
+
+  startState !== state && relay.writeSync(+state);
+  logger.info(`Relay ${relayID}: ${state ? 'ON' : 'OFF'}`);
 }
 
 export function testRelay(relayID: number): void {
-  setRelayState(relayID, true);
+  const state = getRelayState(relayID);
+
+  setRelayState(relayID, !state);
 
   setTimeout(() => {
-    setRelayState(relayID, false);
+    setRelayState(relayID, state);
   }, config.testDuration);
 }

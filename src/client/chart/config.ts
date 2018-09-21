@@ -1,4 +1,4 @@
-import { IExtendedChartConfig } from './horizontalLinePlugin';
+import { IChartConfigExt, IExtendedChartConfig2 } from './horizontalLinePlugin';
 
 const config = {
   type: 'line',
@@ -65,6 +65,6 @@ const config = {
       },
     },
   },
-} as IExtendedChartConfig;
+} as IChartConfigExt;
 
 export default config;

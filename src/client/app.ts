@@ -1,7 +1,9 @@
+import config from '../../config';
 import PriceChart from './chart';
 import Settings from './settings';
 import { ISettings } from '../lib/types';
 
+export const BASE_URL = `http://${config.host}:${config.port}`;
 const loader = document.querySelector('#chart #loading') as HTMLDivElement;
 
 class App {
@@ -19,7 +21,7 @@ class App {
   async fetchPrices(): Promise<void> {
     loader.style.display = 'block';
 
-    const res = await fetch('http://localhost:9999/prices');
+    const res = await fetch(BASE_URL + '/prices');
     const prices = (await res.json()) as Array<number>;
 
     if (!prices.length) return;
@@ -30,7 +32,7 @@ class App {
   }
 
   async fetchSettings(): Promise<void> {
-    const res = await fetch('http://localhost:9999/settings');
+    const res = await fetch(BASE_URL + '/settings');
     const settings = (await res.json()) as ISettings;
 
     sessionStorage.setItem('settings', JSON.stringify(settings));

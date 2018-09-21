@@ -1,9 +1,9 @@
 const config = {
-  host: 'localhost',
+  host: '192.168.43.94',
   port: '9999',
 
   // GPIO pin numbers for relays (3 supported)
-  gpio: [0, 0, 0],
+  relayGPIO: [14, 15, 18],
 
   // Address to test internet connection against
   dnsLookupHost: '1.1.1.1',
