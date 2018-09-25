@@ -1,7 +1,7 @@
-import { Chart } from 'chart.js';
+import { Chart, ChartAnimationObject } from 'chart.js';
 import chartConfig from './config';
 import horizontalLinePlugin from './horizontalLinePlugin';
-import { arrayAverage, arrayMedian } from '../../lib/math';
+import { arrayAverage, arrayMedian } from '../../lib/mathHelper';
 import App from '../app';
 
 const ACTIVE_COLOR = 'red';
@@ -46,23 +46,37 @@ class PriceChart {
     chart.update();
   }
 
-  private getChartData(): Array<number> {
+  private getChartDataset(): Chart.ChartDataSets | undefined {
     const { chart } = this;
-    return ((chart.data &&
-      chart.data.datasets &&
-      chart.data.datasets[0].data) ||
-      []) as Array<number>;
+    return (
+      (chart.data && chart.data.datasets && chart.data.datasets[0]) || undefined
+    );
+  }
+
+  private getChartData(): number[] {
+    const dataset = this.getChartDataset();
+    if (!dataset || !dataset.data) return [];
+
+    return dataset.data as number[];
   }
 
   private setPointColors(colors: Array<string>): void {
-    chartConfig.data!.datasets![0].pointBackgroundColor = colors;
-    chartConfig.data!.datasets![0].pointBorderColor = colors;
-    chartConfig.data!.datasets![0].pointHoverBackgroundColor = colors;
+    const dataset = this.getChartDataset();
+
+    if (!dataset) {
+      return;
+    }
+
+    dataset.pointBackgroundColor = colors;
+    dataset.pointBorderColor = colors;
+    dataset.pointHoverBackgroundColor = colors;
+
     this.chart.update();
   }
 
   setLimit(limit: number): void {
     const data = this.getChartData();
+
     const pointColors = data.map(point => {
       return point <= limit ? ACTIVE_COLOR : PASSIVE_COLOR;
     });

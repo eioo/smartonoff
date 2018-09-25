@@ -4,7 +4,11 @@ import config from '../../../config';
 import { tabHandler } from './tabHandler';
 import { hideRelayInfo, showRelayInfo } from './relayInfoHandler';
 import { ISaveData, ITestData } from '../../lib/types';
-import { getSessionSettings, setSessionSetting } from './sessionStorage';
+import {
+  getSessionSettings,
+  setSessionSetting,
+  getSessionPrices,
+} from './sessionStorage';
 import { getActiveHoursByCheapest } from '../../lib/activeHours';
 
 const $ = document.querySelector.bind(document);
@@ -127,10 +131,10 @@ class Settings {
 
     // By cheapest
     if (relaySettings[2]) {
-      console.log('what');
-      const cheapestHours = getActiveHoursByCheapest(relaySettings[2]
-        .cheapest as number);
-      console.log(cheapestHours);
+      const cheapest = relaySettings[2].cheapest as number;
+      const prices = getSessionPrices();
+      const cheapestHours = getActiveHoursByCheapest(cheapest, prices);
+
       this.app.chart.setActivePoints(cheapestHours);
       return;
     }
