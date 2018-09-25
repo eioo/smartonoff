@@ -7,13 +7,13 @@
     "moduleResolution": "node",
     "rootDir": "src/server",
     "outDir": "build",
-    "forceConsistentCasingInFileNames": true,
+    "strictNullChecks": true,
     "noImplicitReturns": true,
     "noImplicitThis": true,
     "noImplicitAny": true,
-    "strictNullChecks": true,
-    "suppressImplicitAnyIndexErrors": true,
-    "noUnusedLocals": false
+    "noUnusedLocals": false,
+    "forceConsistentCasingInFileNames": true,
+    "suppressImplicitAnyIndexErrors": true
   },
   "exclude": ["node_modules", "dist"]
 }
