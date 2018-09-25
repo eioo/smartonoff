@@ -1,3 +1,5 @@
+import { ChartOptions, ChartScales, ChartYAxe } from 'chart.js';
+
 interface IChartExt extends Chart {
   scales: Chart.ChartScales;
   chart: Chart;

@@ -6,7 +6,7 @@ import {
   getActiveHoursByPrice,
 } from '../lib/activeHours';
 import { getSettings } from './settingsIO';
-import config from '../../config';
+import config from '../config';
 import { Gpio } from 'onoff';
 
 interface IRelays {

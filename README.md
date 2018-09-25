@@ -4,6 +4,8 @@ Can turn relays on / off based on current electricity prices. Works with Raspber
 
 Currently only [Fortum.fi](http://fortum.fi/) electricity prices are supported.
 
+![Smart On/Off](https://raw.githubusercontent.com/Kallu609/smartonoff/master/assets/preview.png)
+
 ## Requirements
 
 Required packages:
@@ -16,21 +18,7 @@ Required packages:
 
 You need to be connected to internet. Ethernet and wireless both work.
 
-### Setupping LCD Display
-
-The screen I'm using: [RB-LCD-7-2](https://www.conrad.de/de/raspberry-pi-display-modul-rb-lcd-7-2-raspberry-pi-banana-pi-cubieboard-pcduino-1543962.html)
-
-Add text below to `/boot/config.txt` to set display mode correctly.
-
-```
-max_usb_current=1
-hdmi_group=2
-hdmi_mode=87
-hdmi_cvt 1024 600 60 6 0 0 0
-hdmi_drive=1
-```
-
-I use addon called [Virtual Keyboard](https://chrome.google.com/webstore/detail/virtual-keyboard/pflmllfnnabikmfkkaddkoolinlfninn) to enable touch keyboard on chrome. Recommended zoom level is 120%
+First of all, start by going to `src/config.ts` and modify it up to your needs.
 
 ### Building
 
@@ -62,8 +50,28 @@ Development environment:
 
 `npm run dev` or `yarn dev`
 
-### Start on boot
+### Setupping LCD Display (optional)
+
+The screen I'm using: [RB-LCD-7-2](https://www.conrad.de/de/raspberry-pi-display-modul-rb-lcd-7-2-raspberry-pi-banana-pi-cubieboard-pcduino-1543962.html)
+
+Add text below to `/boot/config.txt` to set display mode correctly.
+
+```
+max_usb_current=1
+hdmi_group=2
+hdmi_mode=87
+hdmi_cvt 1024 600 60 6 0 0 0
+hdmi_drive=1
+```
+
+I use addon called [Virtual Keyboard](https://chrome.google.com/webstore/detail/virtual-keyboard/pflmllfnnabikmfkkaddkoolinlfninn) to enable touch keyboard on Chromium. Recommended zoom level with my displays resolution is 120%.
+
+### Start on boot (optional)
 
 To autostart the script on boot, add following command to `~/.config/lxsession/LXDE-pi/autostart`
 
 `@lxterminal -e "/PATH/TO/smartonoff/scripts/start.sh"`
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details

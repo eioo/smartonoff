@@ -5,7 +5,7 @@ import * as relayController from './relayController';
 import { routes } from './routes';
 import logger from './logger';
 import { waitForConnection } from './connectionCheck';
-import config from '../../config';
+import config from '../config';
 import { openBrowser } from './processController';
 
 const DIST_FOLDER = path.join(__dirname, '../../dist');

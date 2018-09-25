@@ -1,4 +1,4 @@
-import config from '../../config';
+import config from '../config';
 import PriceChart from './chart';
 import Settings from './settings';
 import { ISettings } from '../lib/types';

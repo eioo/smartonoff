@@ -1,5 +1,5 @@
-import { Chart, ChartAnimationObject } from 'chart.js';
-import chartConfig from './config';
+import { Chart } from 'chart.js';
+import chartConfig from './chartConfig';
 import horizontalLinePlugin from './horizontalLinePlugin';
 import { arrayAverage, arrayMedian } from '../../lib/mathHelper';
 import App from '../app';

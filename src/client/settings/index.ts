@@ -1,5 +1,5 @@
 import App, { BASE_URL } from '../app';
-import config from '../../../config';
+import config from '../../config';
 
 import { tabHandler } from './tabHandler';
 import { hideRelayInfo, showRelayInfo } from './relayInfoHandler';

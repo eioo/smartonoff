@@ -1,4 +1,4 @@
-import config from '../../config';
+import config from '../config';
 import { exec } from 'child_process';
 import * as path from 'path';
 import logger from './logger';
