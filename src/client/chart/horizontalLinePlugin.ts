@@ -1,5 +1,3 @@
-import { ChartOptions, ChartScales, ChartYAxe } from 'chart.js';
-
 interface IChartExt extends Chart {
   scales: Chart.ChartScales;
   chart: Chart;
@@ -35,10 +33,6 @@ const horizontalLinePlugin = {
     ctx.moveTo(xAxis.left, yLinePos);
     ctx.lineTo(xAxis.right, yLinePos);
     ctx.stroke();
-
-    /* ctx.fillStyle = 'rgba(255, 0, 0, 0.2)';
-    ctx.fillRect(xAxis.left, yLinePos, xAxis.width, yAxis.bottom - yLinePos);
-    ctx.stroke(); */
   },
 
   afterDatasetsDraw: function(chart: IChartExt, easing: string): void {
