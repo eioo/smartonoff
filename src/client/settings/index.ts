@@ -78,6 +78,7 @@ class Settings {
     const relayID = getSelectedRelayID();
     const data = { relayID } as ITestData;
 
+    saveButton.classList.add('loading');
     testButton.classList.add('loading');
 
     await fetch(BASE_URL + '/test', {
@@ -90,6 +91,7 @@ class Settings {
     });
 
     setTimeout(() => {
+      saveButton.classList.remove('loading');
       testButton.classList.remove('loading');
     }, config.testDuration);
   }

@@ -3,3 +3,4 @@ dist
 build
 node_modules
 src/server/settings.json
+*-error.log

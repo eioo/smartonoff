@@ -52,7 +52,14 @@ export async function updateRelayStates(): Promise<void> {
   const settings = await getSettings();
   const currentHour = new Date().getHours();
 
-  for (const [relayID, relaySettings] of Object.entries(settings)) {
+  for (let relayID = 1; relayID < 4; relayID++) {
+    const relaySettings = settings[relayID];
+
+    if (!relaySettings) {
+      setRelayState(relayID, false);
+      continue;
+    }
+
     const conditionID = parseInt(Object.keys(relaySettings)[0]);
     const values = relaySettings[conditionID];
 
@@ -73,7 +80,7 @@ export async function updateRelayStates(): Promise<void> {
     })();
 
     const newRelayState = activeHours.includes(currentHour);
-    setRelayState(parseInt(relayID), newRelayState);
+    setRelayState(relayID, newRelayState);
 
     logger.info(`Relay ${relayID}: ${newRelayState ? 'ON' : 'OFF'}`);
   }
@@ -87,10 +94,6 @@ function getRelayState(relayID: number): boolean {
 function setRelayState(relayID: number, state: boolean): void {
   const startState = getRelayState(relayID);
   const relay = relays[relayID];
-
-  if (startState === state) {
-    return;
-  }
 
   startState !== state && relay.writeSync(+state);
 }
