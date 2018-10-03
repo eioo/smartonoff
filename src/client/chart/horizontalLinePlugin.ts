@@ -19,6 +19,14 @@ const horizontalLinePlugin = {
     const yAxis = chartInstance.scales['y-axis-0'];
     const yLinePos = yAxis.getPixelForValue(yPoint);
 
+    // Check if the line is inside the chart area
+    if (
+      yLinePos > yAxis.getPixelForValue(yAxis.min) ||
+      yLinePos < yAxis.getPixelForValue(yAxis.max)
+    ) {
+      return;
+    }
+
     const ctx = chartInstance.chart.ctx as CanvasRenderingContext2D;
 
     ctx.beginPath();
