@@ -1,5 +1,5 @@
 const config = {
-  host: '192.168.43.94',
+  host: '192.168.43.177',
   port: '9999',
 
   // GPIO pin numbers for relays (3 supported)

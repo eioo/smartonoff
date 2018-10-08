@@ -13,7 +13,7 @@ export function setSessionSetting(setting: ISaveData): void {
 
   const newSettings = (() => {
     if (!valuesExist) {
-      delete settings[setting.settingID];
+      delete settings[setting.relayID];
       return settings;
     }
 

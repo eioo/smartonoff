@@ -6,5 +6,5 @@ pause() {
 cd "$(dirname "$0")"
 cd ..
 
-/opt/nodejs/lib/node_modules/yarn/bin/yarn run server
+yarn run server
 pause

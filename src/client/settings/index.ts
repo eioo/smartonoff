@@ -37,7 +37,7 @@ class Settings {
     testButton.addEventListener('click', this.testRelay);
   }
 
-  private saveRelay = () => {
+  private saveRelay = async () => {
     const values = {} as any;
     const relayID = getSelectedRelayID();
     const activeTab = $('.tab.active') as HTMLDivElement;
@@ -51,13 +51,19 @@ class Settings {
       const inputName = input.getAttribute('id') as string;
 
       try {
-        values[inputName] = parseFloat(input.value);
-      } catch (e) {
+        const parsedValue = parseFloat(input.value);
+
+        if (parsedValue) {
+          values[inputName] = parsedValue;
+        }
+      } catch {
         values[inputName] = input.value;
       }
     }
 
     const data = { relayID, settingID, values } as ISaveData;
+
+    console.log(data);
 
     fetch(BASE_URL + '/save', {
       method: 'POST',
@@ -68,9 +74,9 @@ class Settings {
       body: JSON.stringify(data),
     });
 
-    setSessionSetting(data);
+    await setSessionSetting(data);
+    await showRelayInfo(relayID as number);
     resetOtherInputs();
-    showRelayInfo(relayID as number);
     this.updateChart(relayID as number);
   };
 

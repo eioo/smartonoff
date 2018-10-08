@@ -72,6 +72,14 @@ To autostart the script on boot, add following command to `~/.config/lxsession/L
 
 `@lxterminal -e "/PATH/TO/smartonoff/scripts/start.sh"`
 
+Run these commands to make node available for root if getting error when using NVM installation of node:
+
+````n=$(which node)
+n=${n%/bin/node}
+chmod -R 755 $n/bin/*
+sudo cp -r $n/{bin,lib,s```
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+````

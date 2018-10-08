@@ -11,7 +11,7 @@ export function openBrowser(): void {
   logger.info('Opening browser');
 
   exec(
-    `chromium-browser http://${config.host}:${config.port} --start-fullscreen`,
+    `chromium-browser --kiosk http://${config.host}:${config.port}`,
     (err, stdout, stderr) => {
       if (err) {
         logger.warn('Browser could not be opened');
